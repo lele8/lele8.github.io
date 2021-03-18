@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>crawlergo+xray被动扫描实现自动挖洞</title>
+      <link href="2021/03/18/crawlergo-xray%E8%A2%AB%E5%8A%A8%E6%89%AB%E6%8F%8F%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E6%8C%96%E6%B4%9E/"/>
+      <url>2021/03/18/crawlergo-xray%E8%A2%AB%E5%8A%A8%E6%89%AB%E6%8F%8F%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E6%8C%96%E6%B4%9E/</url>
+      
+        <content type="html"><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>正所谓，人在家中坐，洞从天上来</p><p>想要更高效率的漏洞挖掘，还是使用扫描器</p><p>毕竟人的精力是有限的，而且可能做不到每个参数都进行测试</p><h1 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h1><h2 id="工具安装"><a href="#工具安装" class="headerlink" title="工具安装"></a>工具安装</h2><p>将以下工具，根据自己的系统进行下载</p><p>Xray<br><a href="https://github.com/chaitin/xray">https://github.com/chaitin/xray</a><br>crawlergo_x_XRAY<br><a href="https://github.com/timwhitez/crawlergo_x_XRAY">https://github.com/timwhitez/crawlergo_x_XRAY</a><br>crawlergo<br><a href="https://github.com/0Kee-Team/crawlergo">https://github.com/0Kee-Team/crawlergo</a></p><p>下载完成之后要进行配置，我的如下图</p><p><img src="/2021/03/18/crawlergo-xray%E8%A2%AB%E5%8A%A8%E6%89%AB%E6%8F%8F%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E6%8C%96%E6%B4%9E/1.png"></p><p>因为我的谷歌浏览器所在目录不是在x86里，所以也要对脚本中浏览器目录进行更改</p><p><img src="/2021/03/18/crawlergo-xray%E8%A2%AB%E5%8A%A8%E6%89%AB%E6%8F%8F%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E6%8C%96%E6%B4%9E/2.png"></p><h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1.启动xray</span><br><span class="line">xray.exe webscan --listen 127.0.0.1:7777 --html-output proxy.html</span><br><span class="line"></span><br><span class="line">2.启动脚本</span><br><span class="line">python3 launcher.py</span><br></pre></td></tr></table></figure><p><img src="/2021/03/18/crawlergo-xray%E8%A2%AB%E5%8A%A8%E6%89%AB%E6%8F%8F%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E6%8C%96%E6%B4%9E/3.png"></p><h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>有时候扫描器真是个好东西</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 渗透测试 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 渗透测试 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Empire常规使用</title>
       <link href="2021/03/18/Empire%E5%B8%B8%E8%A7%84%E4%BD%BF%E7%94%A8/"/>
       <url>2021/03/18/Empire%E5%B8%B8%E8%A7%84%E4%BD%BF%E7%94%A8/</url>
