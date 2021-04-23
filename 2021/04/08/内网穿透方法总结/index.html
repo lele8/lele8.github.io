@@ -72,7 +72,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> Word count:</span>
-            <span class="post-count">1.4k</span>
+            <span class="post-count">1.6k</span>
         </span>
     </span>
 
@@ -191,13 +191,15 @@
 <p>将脚本上传到目标站点，修改好配置文件即可</p>
 <p><img src="/2021/04/08/%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93/15.png"></p>
 <p>更多使用方法请参考:<a target="_blank" rel="noopener" href="https://github.com/L-codes/Neo-reGeorg">https://github.com/L-codes/Neo-reGeorg</a></p>
-<h2 id="Tunna"><a href="#Tunna" class="headerlink" title="Tunna"></a>Tunna</h2><p>环境如下</p>
+<h2 id="Tunna"><a href="#Tunna" class="headerlink" title="Tunna"></a>Tunna</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">Tunna:一款神奇的工具，它可以通过HTTP封装隧道通信任何TCP，以及用于绕过防火墙环境中的网络限制。</span><br><span class="line"></span><br><span class="line">使用</span><br><span class="line">python proxy.py -u -l [options]</span><br><span class="line">选项</span><br><span class="line">--help, -h 显示帮助消息并退出。</span><br><span class="line">--url&#x3D;URL, -u URL远程webshell</span><br><span class="line">--lport&#x3D;LOCAL_PORT, -l LOCAL_PORT 本地监听端口</span><br><span class="line">--verbose, -v 输出数据包大小</span><br><span class="line">--buffer&#x3D;BUFFERSIZE, -b BUFFERSIZE* HTTP请求大小(一些webshels对大小有限制)</span><br><span class="line">没有SOCKS代理的选择，如果使用SOCKS代理，则忽略此选项</span><br><span class="line">--no-socks, -n 不用SOCKS代理</span><br><span class="line">--rport&#x3D;REMOTE_PORT, -r REMOTE_PORT 连接webshell服务的远程端口</span><br><span class="line">--addr&#x3D;REMOTE_IP, -a REMOTE_IP 远程webshell连接地址（默认为 127.0.0.1）</span><br><span class="line">注：Tunna代理并不是非常稳定，经常出现掉线情况，尤其是使用Tunna代理远程连接的流量时，经常掉线。但是使用Tunna访问内网web服务还算稳定。</span><br></pre></td></tr></table></figure>
+<p>环境如下</p>
 <p><img src="/2021/04/08/%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93/13.png"></p>
 <p>php的话要开启该扩展，不然使用不了</p>
 <p><img src="/2021/04/08/%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93/16.png"></p>
 <p>上传文件</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python proxy.py -u http:&#x2F;&#x2F;192.168.213.179:8080&#x2F;conn.php -l 6983 -v</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python proxy.py -u http:&#x2F;&#x2F;192.168.213.179:8080&#x2F;conn.php -l 6669 -a 192.168.93.10 -r 3389 -v</span><br></pre></td></tr></table></figure>
 <p>我这里使用有点问题，连接不了</p>
+<p><img src="/2021/04/08/%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93/19.png"></p>
 <p>更多参数请参考:<a target="_blank" rel="noopener" href="https://github.com/SECFORCE/Tunna">https://github.com/SECFORCE/Tunna</a></p>
 <h1 id="ICMP隧道"><a href="#ICMP隧道" class="headerlink" title="ICMP隧道"></a>ICMP隧道</h1><h2 id="icmpsh"><a href="#icmpsh" class="headerlink" title="icmpsh"></a>icmpsh</h2><p>假如只有ICMP出网</p>
 <p>这个工具好像要安装impacket</p>
